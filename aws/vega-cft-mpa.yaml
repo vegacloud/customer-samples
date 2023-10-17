@@ -48,6 +48,11 @@ Resources:
     Properties:
       PolicyDocument:
         Statement:
+          - Sid: ComputeOptimizerAPIAccess
+            Action:
+              - "compute-optimizer:Get*"
+            Effect: "Allow"  
+            Resource: "*"
           - Sid: Stmt1561483568234
             Action:
               - "savingsplans:*"
