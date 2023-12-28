@@ -1,0 +1,328 @@
+Parameters:
+  VegaExternalIdParameter:
+    Type: String
+    Description: Vega Cloud's ExternalId for your environments (helps to authenticate role assumption).
+    Default: "vega:<insert new Vega OrgID>"
+Resources:
+  VegaDiscoveryReader:
+    Properties:
+      RoleName: VegaDiscoveryReader
+      AssumeRolePolicyDocument:
+        Statement:
+          - Action: "sts:AssumeRole"
+            Condition:
+              StringEquals:
+                "sts:ExternalId": !Ref VegaExternalIdParameter
+            Effect: Allow
+            Principal:
+              # 955075715928 This one of the Vega Data Collection Accounts
+              # 549829454055 This one of the Vega Data Collection Accounts
+              # 933023916684 This is the Vega Saas Platform Account
+              AWS: ["arn:aws:iam::955075715928:root", "arn:aws:iam::549829454055:root", "arn:aws:iam::933023916684:root"]
+          - Action: "sts:AssumeRole"
+            Effect: Allow
+            Principal:
+              Service: ["cloudformation.amazonaws.com"]
+        Version: 2012-10-17
+    Type: "AWS::IAM::Role"
+  DiscoveryPolicy:
+    DependsOn: VegaDiscoveryReader
+    Type: "AWS::IAM::Policy"
+    Properties:
+      PolicyDocument:
+        Statement:
+          # AWS Batch Discovery
+          - Effect: Allow
+            Resource: "*"
+            Action:
+              - "batch:Describe*"
+              - "batch:List*"
+          # CloudWatch Metrics Discovery
+          - Effect: Allow
+            Resource: "*"
+            Action:
+              - "cloudwatch:GetMetricData"
+              - "cloudwatch:GetMetricStatistics"
+              - "cloudwatch:ListMetrics"
+              - "cloudwatch:ListTagsForResource"
+          # EC2 Resource Discovery
+          - Effect: Allow
+            Resource: "*"
+            Action:
+              - "ec2:Describe*"
+              - "ec2:GetCapacityReservationUsage"
+              - "ec2:GetGroupsForCapacityReservation"
+              - "ec2:GetHostReservationPurchasePreview"
+          # RDS Resource Discovery
+          - Effect: Allow
+            Resource: "*"
+            Action:
+              - "rds:DescribeDBClusterSnapshots"
+              - "rds:DescribeDBClusters"
+              - "rds:DescribeDBClusterSnapshots"
+              - "rds:DescribeRecommendationGroups"
+              - "rds:DescribeRecommendations"
+              - "rds:DescribeReservedDBInstances"
+              - "rds:DescribeReservedDBInstancesOfferings"
+              - "rds:DescribeDBInstances"
+              - "rds:DescribeDBSnapshots"
+              - "rds:ListTagsForResource"
+          # Elastic Container Service (ECS)
+          - Effect: Allow
+            Resource: "*"
+            Action:
+              - "ecs:Describe*"
+              - "ecs:List*"
+          # Elastic Kubernetes Service (EKS)
+          - Effect: Allow
+            Resource: "*"
+            Action:
+              - "eks:Describe*"
+              - "eks:List*"
+          # ElastiCache Resource  Discovery
+          - Effect: Allow
+            Resource: "*"
+            Action:
+              - "elasticache:Describe*"
+              - "elasticache:List*"
+          # Redshift Resource Discovery
+          - Effect: Allow
+            Resource: "*"
+            Action:
+              - "redshift:DescribeReservedNodes"
+              - "redshift:DescribeReservedNodeExchangeStatus"
+              - "redshift:DescribeReservedNodeOfferings"
+              - "redshift:DescribeClusters"
+              - "redshift:DescribeClusterSnapshots"
+              - "redshift:DescribeStorage"
+              - "redshift:DescribeTags"
+              - "redshift:GetReservedNodeExchangeOfferings"
+              - "redshift:GetReservedNodeExchangeConfigurationOptions"
+          # DynamoDB Resource Discovery
+          - Effect: Allow
+            Resource: "*"
+            Action:
+              - "dynamodb:DescribeReservedCapacity"
+              - "dynamodb:DescribeReservedCapacityOfferings"
+              - "dynamodb:ListTagsOfResource"
+          # Opensearch Resource Discovery
+          - Effect: Allow
+            Resource: "*"
+            Action:
+              - "es:DescribeReservedElasticsearchInstances"
+              - "es:DescribeReservedElasticsearchInstanceOfferings"
+              - "es:DescribeReservedInstances"
+              - "es:DescribeReservedInstanceOfferings"
+              - "es:ListTags"
+          # Medialive Resource Discovery
+          - Effect: Allow
+            Resource: "*"
+            Action:
+              - "medialive:DescribeReservation"
+              - "medialive:ListReservations"
+              - "medialive:ListTagsForResource"
+          # Trusted Advisor Resource Discovery
+          - Effect: Allow
+            Resource: "*"
+            Action:
+              - "support:DescribeTrustedAdvisorCheckRefreshStatuses"
+              - "support:DescribeTrustedAdvisorCheckResult"
+              - "support:DescribeTrustedAdvisorChecks"
+              - "support:DescribeTrustedAdvisorCheckSummaries"
+              - "support:RefreshTrustedAdvisorCheck"
+              - "trustedadvisor:Describe*"
+          # Savings Plan Resource Discovery
+          - Effect: Allow
+            Resource: "*"
+            Action:
+              - "savingsplans:*"
+          # Compute Optimizer Resource Discovery
+          - Effect: Allow
+            Resource: "*"
+            Action:
+              - "compute-optimizer:GetAutoScalingGroupRecommendations"
+              - "compute-optimizer:GetEBSVolumeRecommendations"
+              - "compute-optimizer:GetEC2InstanceRecommendations"
+              - "compute-optimizer:GetEC2RecommendationProjectedMetrics"
+              - "compute-optimizer:GetEffectiveRecommendationPreferences"
+              - "compute-optimizer:GetEnrollmentStatus"
+              - "compute-optimizer:GetEnrollmentStatusesForOrganization"
+              - "compute-optimizer:GetLambdaFunctionRecommendations"
+              - "compute-optimizer:GetRecommendationPreferences"
+              - "compute-optimizer:GetRecommendationSummaries"
+          # S3 Resource Discovery
+          - Effect: Allow
+            Resource: "*"
+            Action:
+              # Note: Get* is filtered with an explicit deny on GetObject below.
+              - "s3:Get*"
+              - "s3:List*"
+          - Action:
+              - "s3:GetObject"
+            Effect: Deny
+            Resource: "*"
+      PolicyName: VegaDiscoveryReaderPolicy
+      Roles:
+        - VegaDiscoveryReader
+  VegaInformer:
+    # This role and policy are used by the Vega Platform discover and tag resources in your account(s).
+    Properties:
+      RoleName: VegaInformer
+      AssumeRolePolicyDocument:
+        Statement:
+          - Action: "sts:AssumeRole"
+            Condition:
+              StringEquals:
+                "sts:ExternalId": !Ref VegaExternalIdParameter
+            Effect: Allow
+            Principal:
+              AWS: ["arn:aws:iam::955075715928:root", "arn:aws:iam::549829454055:root"]
+          - Action: "sts:AssumeRole"
+            Effect: Allow
+            Principal:
+              Service: ["cloudformation.amazonaws.com"]
+        Version: 2012-10-17
+    Type: "AWS::IAM::Role"
+  InformerPolicy:
+    DependsOn: VegaInformer
+    Type: "AWS::IAM::Policy"
+    Properties:
+      PolicyDocument:
+        Statement:
+          # CloudWatch Metrics Discovery
+          - Effect: Allow
+            Resource: "*"
+            Action:
+              - "cloudwatch:GetMetricData"
+              - "cloudwatch:GetMetricStatistics"
+              - "cloudwatch:ListMetrics"
+              - "cloudwatch:ListTagsForResource"
+          # EC2 Resource Discovery
+          - Effect: Allow
+            Resource: "*"
+            Action:
+              - "ec2:Describe*"
+              - "ec2:GetCapacityReservationUsage"
+              - "ec2:GetGroupsForCapacityReservation"
+              - "ec2:GetHostReservationPurchasePreview"
+
+          # RDS Resource Discovery
+          - Effect: Allow
+            Resource: "*"
+            Action:
+              - "rds:DescribeDBClusterSnapshots"
+              - "rds:DescribeDBClusters"
+              - "rds:DescribeDBClusterSnapshots"
+              - "rds:DescribeRecommendationGroups"
+              - "rds:DescribeRecommendations"
+              - "rds:DescribeReservedDBInstances"
+              - "rds:DescribeReservedDBInstancesOfferings"
+              - "rds:DescribeDBInstances"
+              - "rds:DescribeDBSnapshots"
+              - "rds:ListTagsForResource"
+
+          # Elastic Container Service (ECS)
+          - Effect: Allow
+            Resource: "*"
+            Action:
+              - "ecs:Describe*"
+              - "ecs:List*"
+
+          # Elastic Kubernetes Service (EKS)
+          - Effect: Allow
+            Resource: "*"
+            Action:
+              - "eks:Describe*"
+              - "eks:List*"
+
+          # ElastiCache Resource  Discovery
+          - Effect: Allow
+            Resource: "*"
+            Action:
+              - "elasticache:Describe*"
+              - "elasticache:List*"
+
+          # Redshift Resource Discovery
+          - Effect: Allow
+            Resource: "*"
+            Action:
+              - "redshift:DescribeReservedNodes"
+              - "redshift:DescribeReservedNodeExchangeStatus"
+              - "redshift:DescribeReservedNodeOfferings"
+              - "redshift:DescribeClusters"
+              - "redshift:DescribeClusterSnapshots"
+              - "redshift:DescribeStorage"
+              - "redshift:DescribeTags"
+              - "redshift:GetReservedNodeExchangeOfferings"
+              - "redshift:GetReservedNodeExchangeConfigurationOptions"
+
+          # DynamoDB Resource Discovery
+          - Effect: Allow
+            Resource: "*"
+            Action:
+              - "dynamodb:DescribeReservedCapacity"
+              - "dynamodb:DescribeReservedCapacityOfferings"
+              - "dynamodb:ListTagsOfResource"
+
+          # Opensearch Resource Discovery
+          - Effect: Allow
+            Resource: "*"
+            Action:
+              - "es:DescribeReservedElasticsearchInstances"
+              - "es:DescribeReservedElasticsearchInstanceOfferings"
+              - "es:DescribeReservedInstances"
+              - "es:DescribeReservedInstanceOfferings"
+              - "es:ListTags"
+
+          # Medialive Resource Discovery
+          - Effect: Allow
+            Resource: "*"
+            Action:
+              - "medialive:DescribeReservation"
+              - "medialive:ListReservations"
+              - "medialive:ListTagsForResource"
+
+          # Trusted Advisor Resource Discovery
+          - Effect: Allow
+            Resource: "*"
+            Action:
+              - "support:DescribeTrustedAdvisorCheckRefreshStatuses"
+              - "support:DescribeTrustedAdvisorCheckResult"
+              - "support:DescribeTrustedAdvisorChecks"
+              - "support:DescribeTrustedAdvisorCheckSummaries"
+              - "support:RefreshTrustedAdvisorCheck"
+              - "trustedadvisor:Describe*"
+          # Savings Plan Resource Discovery
+          - Effect: Allow
+            Resource: "*"
+            Action:
+              - "savingsplans:*"
+          # Compute Optimizer Resource Discovery
+          - Effect: Allow
+            Resource: "*"
+            Action:
+              - "compute-optimizer:GetAutoScalingGroupRecommendations"
+              - "compute-optimizer:GetEBSVolumeRecommendations"
+              - "compute-optimizer:GetEC2InstanceRecommendations"
+              - "compute-optimizer:GetEC2RecommendationProjectedMetrics"
+              - "compute-optimizer:GetEffectiveRecommendationPreferences"
+              - "compute-optimizer:GetEnrollmentStatus"
+              - "compute-optimizer:GetEnrollmentStatusesForOrganization"
+              - "compute-optimizer:GetLambdaFunctionRecommendations"
+              - "compute-optimizer:GetRecommendationPreferences"
+              - "compute-optimizer:GetRecommendationSummaries"
+          # S3 Resource Discovery
+          - Effect: Allow
+            Resource: "*"
+            Action:
+              # Note: Get* is filtered with an explicit deny on GetObject below.
+              - "s3:Get*"
+              - "s3:List*"
+          - Action:
+              - "s3:GetObject"
+            Effect: Deny
+            Resource: "*"
+
+      PolicyName: VegaInformerPolicy
+      Roles:
+        - VegaInformer
