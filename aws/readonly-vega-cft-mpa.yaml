@@ -1,0 +1,121 @@
+Parameters:
+  CurBucketsParameter:
+    Type: String
+    Description: A comma-separated list of buckets & objects (/*) Vega Cloud can use to build your dashboards and reports.
+    Default: "arn:aws:s3:::your-bucket-here,arn:aws:s3:::your-bucket-here/* (one for bucket, one for resource)"
+  AttachReadOnlyRole:
+    Type: String
+    AllowedValues:
+      - true
+      - false
+    Default: false
+    Description: Attach the AWS Managed ReadOnly policy to Vega Cloud's Role? This will provide Vega read-only access to more AWS Service API details within your environment.
+  VegaExternalIdParameter:
+    Type: String
+    Description: Vega Cloud's ExternalId for your environments (helps to authenticate role assumption).
+    Default: "vega:<get_id_from_vega_csm>"
+Conditions:
+  AttachReadOnly: !Equals
+    - !Ref AttachReadOnlyRole
+    - true
+Resources:
+  VegaAdminRole:
+    Type: "AWS::IAM::Role"
+    Properties:
+      RoleName: VegaAdmin
+      AssumeRolePolicyDocument:
+        Statement:
+          - Action: "sts:AssumeRole"
+            Condition:
+              StringEquals:
+                "sts:ExternalId": !Ref VegaExternalIdParameter
+            Effect: Allow
+            Principal:
+              # 955075715928 This one of the Vega Data Collection Accounts
+              # 549829454055 This one of the Vega Data Collection Accounts
+              # 933023916684 This is the Vega Saas Platform Account
+              AWS: ["arn:aws:iam::955075715928:root", "arn:aws:iam::549829454055:root", "arn:aws:iam::933023916684:root"]
+            Sid: "Stmt156148350008823"
+        Version: 2012-10-17
+      ManagedPolicyArns:
+        - !If
+          - AttachReadOnly
+          - "arn:aws:iam::aws:policy/ReadOnlyAccess"
+          - !Ref 'AWS::NoValue'
+  DiscoveryPolicy:
+    DependsOn: VegaAdminRole
+    Type: "AWS::IAM::Policy"
+    Properties:
+      PolicyDocument:
+        Statement:
+          - Sid: ComputeOptimizerAPIAccess
+            Action:
+              - "compute-optimizer:Get*"
+              - "compute-optimizer:Describe*"
+              - "compute-optimizer:List*"
+              - "compute-optimizer:Export*"
+            Effect: "Allow"  
+            Resource: "*"
+          - Sid: Stmt1561483568234
+            Action:
+              - "savingsplans:Describe*"
+              - "savingsplans:List*"
+            Effect: Allow
+            Resource: "*"
+          - Sid: Stmt1561483568365
+            Action:
+              - "organizations:Describe*"
+              - "organizations:List*"
+            Effect: Allow
+            Resource: "*"
+            # Access to Pricing Data and Current Usage Report Definitions
+          - Sid: Stmt1651841132818
+            Effect: Allow
+            Action:
+              - "pricing:Get*"
+              - "pricing:Describe*"
+              - "cur:Describe*"
+            Resource: "*"
+          # Cost Explorer API Readonly Access
+          - Sid: Stmt1651840873147
+            Effect: Allow
+            Action:
+              - "ce:Describe*"
+              - "ce:Get*"
+              - "ce:List*"
+            Resource: "*"
+          - Sid: Stmt1651841132810
+            Effect: Allow
+            Action:
+              - "billingconductor:List*"
+            Resource: "*"
+      PolicyName: llcvegadiscoverypolicy
+      Roles:
+        - VegaAdmin
+  S3SyncPolicy:
+    DependsOn: VegaAdminRole
+    Type: "AWS::IAM::Policy"
+    Properties:
+      PolicyDocument:
+        Statement:
+          - Sid: Stmt1651841132811
+            Effect: Allow
+            Action:
+              - "s3:ListObjectsV2"
+              - "s3:CopyObject"
+              - "s3:GetBucketLocation"
+              - "s3:GetObjectTagging"
+              - "s3:GetBucketLocation"
+              - "s3:GetObject"
+              - "s3:GetAccountPublicAccessBlock"
+              - "s3:GetObjectTagging"
+              - "s3:GetBucketTagging"
+              - "s3:ListBucket"
+              - "s3:ListBucketMultipartUploads"
+              - "s3:ListMultipartUploadParts"
+              - "s3:AbortMultipartUpload"
+            # Add any additional S3 buckets below
+            Resource: !Split [",", !Ref CurBucketsParameter]
+      PolicyName: llcvegasyncpolicy
+      Roles:
+        - VegaAdmin
