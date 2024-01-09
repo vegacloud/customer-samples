@@ -1,0 +1,331 @@
+Parameters:
+  VegaExternalIdParameter:
+    Type: String
+    Description: Vega Cloud's ExternalId for your environments (helps to authenticate role assumption).
+    Default: "vega:b57896e704c949788e36f28a1c5a116f"
+Resources:
+  VegaDiscoveryReader:
+    Properties:
+      RoleName: VegaDiscoveryReader
+      AssumeRolePolicyDocument:
+        Statement:
+          - Action: "sts:AssumeRole"
+            Condition:
+              StringEquals:
+                "sts:ExternalId": !Ref VegaExternalIdParameter
+            Effect: Allow
+            Principal:
+              # 955075715928 This one of the Vega Data Collection Accounts
+              # 549829454055 This one of the Vega Data Collection Accounts
+              # 933023916684 This is the Vega Saas Platform Account
+              AWS: ["arn:aws:iam::955075715928:root", "arn:aws:iam::549829454055:root", "arn:aws:iam::933023916684:root"]
+          - Action: "sts:AssumeRole"
+            Effect: Allow
+            Principal:
+              Service: ["cloudformation.amazonaws.com"]
+        Version: 2012-10-17
+    Type: "AWS::IAM::Role"
+  DiscoveryPolicy:
+    DependsOn: VegaDiscoveryReader
+    Type: "AWS::IAM::Policy"
+    Properties:
+      PolicyDocument:
+        Statement:
+          # AWS Batch Discovery
+          - Effect: Allow
+            Resource: "*"
+            Action:
+              - "batch:Describe*"
+              - "batch:List*"
+          # CloudWatch Metrics Discovery
+          - Effect: Allow
+            Resource: "*"
+            Action:
+              - "cloudwatch:GetMetricData"
+              - "cloudwatch:GetMetricStatistics"
+              - "cloudwatch:ListMetrics"
+              - "cloudwatch:ListTagsForResource"
+          # EC2 Resource Discovery
+          - Effect: Allow
+            Resource: "*"
+            Action:
+              - "ec2:Describe*"
+              - "ec2:GetCapacityReservationUsage"
+              - "ec2:GetGroupsForCapacityReservation"
+              - "ec2:GetHostReservationPurchasePreview"
+          # RDS Resource Discovery
+          - Effect: Allow
+            Resource: "*"
+            Action:
+              - "rds:DescribeDBClusterSnapshots"
+              - "rds:DescribeDBClusters"
+              - "rds:DescribeDBClusterSnapshots"
+              - "rds:DescribeRecommendationGroups"
+              - "rds:DescribeRecommendations"
+              - "rds:DescribeReservedDBInstances"
+              - "rds:DescribeReservedDBInstancesOfferings"
+              - "rds:DescribeDBInstances"
+              - "rds:DescribeDBSnapshots"
+              - "rds:ListTagsForResource"
+          # Elastic Container Service (ECS)
+          - Effect: Allow
+            Resource: "*"
+            Action:
+              - "ecs:Describe*"
+              - "ecs:List*"
+          # Elastic Kubernetes Service (EKS)
+          - Effect: Allow
+            Resource: "*"
+            Action:
+              - "eks:Describe*"
+              - "eks:List*"
+          # ElastiCache Resource  Discovery
+          - Effect: Allow
+            Resource: "*"
+            Action:
+              - "elasticache:Describe*"
+              - "elasticache:List*"
+          # Redshift Resource Discovery
+          - Effect: Allow
+            Resource: "*"
+            Action:
+              - "redshift:DescribeReservedNodes"
+              - "redshift:DescribeReservedNodeExchangeStatus"
+              - "redshift:DescribeReservedNodeOfferings"
+              - "redshift:DescribeClusters"
+              - "redshift:DescribeClusterSnapshots"
+              - "redshift:DescribeStorage"
+              - "redshift:DescribeTags"
+              - "redshift:GetReservedNodeExchangeOfferings"
+              - "redshift:GetReservedNodeExchangeConfigurationOptions"
+          # DynamoDB Resource Discovery
+          - Effect: Allow
+            Resource: "*"
+            Action:
+              - "dynamodb:DescribeReservedCapacity"
+              - "dynamodb:DescribeReservedCapacityOfferings"
+              - "dynamodb:ListTagsOfResource"
+          # Opensearch Resource Discovery
+          - Effect: Allow
+            Resource: "*"
+            Action:
+              - "es:DescribeReservedElasticsearchInstances"
+              - "es:DescribeReservedElasticsearchInstanceOfferings"
+              - "es:DescribeReservedInstances"
+              - "es:DescribeReservedInstanceOfferings"
+              - "es:ListTags"
+          # Medialive Resource Discovery
+          - Effect: Allow
+            Resource: "*"
+            Action:
+              - "medialive:DescribeReservation"
+              - "medialive:ListReservations"
+              - "medialive:ListTagsForResource"
+          # Trusted Advisor Resource Discovery
+          - Effect: Allow
+            Resource: "*"
+            Action:
+              - "support:DescribeTrustedAdvisorCheckRefreshStatuses"
+              - "support:DescribeTrustedAdvisorCheckResult"
+              - "support:DescribeTrustedAdvisorChecks"
+              - "support:DescribeTrustedAdvisorCheckSummaries"
+              - "support:RefreshTrustedAdvisorCheck"
+              - "trustedadvisor:Describe*"
+          # Savings Plan Resource Discovery
+          - Effect: Allow
+            Resource: "*"
+            Action:
+              - "savingsplans:Describe*"
+              - "savingsplans:List*"
+          # Compute Optimizer Resource Discovery
+          - Effect: Allow
+            Resource: "*"
+            Action:
+              - "compute-optimizer:GetAutoScalingGroupRecommendations"
+              - "compute-optimizer:GetEBSVolumeRecommendations"
+              - "compute-optimizer:GetEC2InstanceRecommendations"
+              - "compute-optimizer:GetEC2RecommendationProjectedMetrics"
+              - "compute-optimizer:GetEffectiveRecommendationPreferences"
+              - "compute-optimizer:GetEnrollmentStatus"
+              - "compute-optimizer:GetEnrollmentStatusesForOrganization"
+              - "compute-optimizer:GetLambdaFunctionRecommendations"
+              - "compute-optimizer:GetRecommendationPreferences"
+              - "compute-optimizer:GetRecommendationSummaries"
+          # S3 Resource Discovery
+          - Effect: Allow
+            Resource: "*"
+            Action:
+              # Note: Get* is filtered with an explicit deny on GetObject below.
+              - "s3:Get*"
+              - "s3:List*"
+          - Action:
+              - "s3:GetObject"
+            Effect: Deny
+            Resource: "*"
+      PolicyName: VegaDiscoveryReaderPolicy
+      Roles:
+        - VegaDiscoveryReader
+  VegaOperator:
+    # This role and policy created by this CFT are used by the Vega Platform to park resources in your AWS account(s)
+    # Optimize includes minimal permissions for such actions as starting/stopping instances, etc.
+    Properties:
+      RoleName: VegaOperator
+      AssumeRolePolicyDocument:
+        Statement:
+          - Action: "sts:AssumeRole"
+            Condition:
+              StringEquals:
+                "sts:ExternalId": !Ref VegaExternalIdParameter
+            Effect: Allow
+            Principal:
+              # 955075715928 This one of the Vega Data Collection Accounts
+              # 549829454055 This one of the Vega Data Collection Accounts
+              # 933023916684 This is the Vega Saas Platform Account
+              AWS: ["arn:aws:iam::955075715928:root", "arn:aws:iam::549829454055:root", "arn:aws:iam::933023916684:root"]
+          - Action: "sts:AssumeRole"
+            Effect: Allow
+            Principal:
+              Service: ["cloudformation.amazonaws.com"]
+        Version: 2012-10-17
+    Type: "AWS::IAM::Role"
+  ParkingPolicy:
+    DependsOn: VegaOperator
+    Type: "AWS::IAM::Policy"
+    Properties:
+      PolicyDocument:
+        Statement:
+          # General Parking Requirements
+          - Effect: Allow
+            Resource: "*"
+            Action:          
+              - "autoscaling:DescribeAutoScalingGroups"
+              - "autoscaling:UpdateAutoScalingGroup"
+              - "autoscaling:SuspendProcesses"
+              - "autoscaling:ResumeProcesses"
+              - "autoscaling:DescribeScalingActivities"
+              - "autoscaling:DescribeLaunchConfigurations"
+              - "autoscaling:DescribeAutoScalingInstances"
+              - "autoscaling:Describe*"
+              - "autoscaling:List*" 
+              - "iam:PassRole"  
+          # Vega Platform Parking Tagging Requirements
+          - Effect: Allow
+            Action: 
+              - "ec2:CreateTags"
+              - "ec2:DeleteTags"
+              - "ec2:DescribeTags"
+              - "elasticloadbalancing:AddTags"
+              - "elasticloadbalancing:RemoveTags"
+              - "elasticloadbalancing:DescribeTags"
+              - "rds:AddTagsToResource"
+              - "rds:RemoveTagsFromResource"
+              - "rds:ListTagsForResource"
+              - "redshift:CreateTags"
+              - "redshift:DeleteTags"
+              - "redshift:DescribeTags"              
+            Resource: "*"
+            Conditions:
+              StringEquals:
+                aws:TagKeys:
+                  - "Vega:OrgId"
+                  - "Vega:ResourceParkingEnabled"                  
+                  - "Vega:ParkingSchedule"
+                  - "Vega:ParkUntil"                  
+                  - "Vega:Owner"                  
+                  - "Vega:ParkingScheduleGroup"                   
+          - Effect: Deny
+            Action: 
+              - "ec2:CreateTags"
+              - "ec2:DeleteTags"
+              - "ec2:DescribeTags"
+              - "elasticloadbalancing:AddTags"
+              - "elasticloadbalancing:RemoveTags"
+              - "elasticloadbalancing:DescribeTags"
+              - "rds:AddTagsToResource"
+              - "rds:RemoveTagsFromResource"
+              - "rds:ListTagsForResource"
+              - "redshift:CreateTags"
+              - "redshift:DeleteTags"
+              - "redshift:DescribeTags"                 
+            Resource: "*"
+            Conditions:
+              StringEquals:
+                aws:TagKeys:
+                  - "Vega:OrgId"
+                  - "Vega:ResourceParkingEnabled"                  
+                  - "Vega:ParkingSchedule"
+                  - "Vega:ParkUntil"                  
+                  - "Vega:Owner"                  
+                  - "Vega:ParkingScheduleGroup" 
+          # CloudWatch Metrics Discovery
+          - Effect: Allow
+            Resource: "*"
+            Action:
+              - "cloudwatch:GetMetricData"
+              - "cloudwatch:GetMetricStatistics"
+              - "cloudwatch:ListMetrics" 
+              - "cloudwatch:DescribeAlarms"
+              - "cloudwatch:DescribeAlarmsForMetric"
+          # EC2 Resource Discovery
+          - Effect: Allow
+            Resource: "*"
+            Action:
+              - "ec2:Describe*"
+          # EC2 Parking
+          - Effect: Allow
+            Resource: "*"
+            Action:
+              - "ec2:RunInstances"              
+              - "ec2:StartInstances"
+              - "ec2:StopInstances"
+          # Load Balancer Resource Discovery
+          - Effect: Allow
+            Resource: "*"
+            Action:
+              - "elasticloadbalancing:Describe*"
+              - "elasticloadbalancing:List*"
+              - "ec2:Describe*"
+          # Load Balancer Parking
+          - Effect: Allow
+            Resource: "*"
+            Action:              
+              - "elasticloadbalancing:RegisterTargets"
+              - "elasticloadbalancing:DeregisterTargets"
+              - "ec2:StartInstances"
+              - "ec2:StopInstances"
+          # RDS Resource Discovery
+          - Effect: Allow
+            Resource: "*"
+            Action:
+              - "rds:DescribeDBClusters"
+              - "rds:DescribeDBInstances"
+          # RDS Parking
+          - Effect: Allow
+            Resource: "*"
+            Action:
+              - "rds:StartDBCluster"
+              - "rds:StartDBInstance"
+              - "rds:StopDBCluster"
+              - "rds:StopDBInstance"
+          # Redshift Resource Discovery
+          - Effect: Allow
+            Resource: "*"
+            Action:
+              - "redshift:DescribeReservedNodes"
+              - "redshift:DescribeReservedNodeExchangeStatus"
+              - "redshift:DescribeReservedNodeOfferings"
+              - "redshift:DescribeClusters"
+              - "redshift:DescribeClusterSnapshots"
+              - "redshift:DescribeStorage"
+              - "redshift:DescribeTags"
+              - "redshift:GetReservedNodeExchangeOfferings"
+              - "redshift:GetReservedNodeExchangeConfigurationOptions"
+          # Park Redshift
+          - Effect: Allow
+            Resource: "*"
+            Action:
+              - "redshift:PauseCluster"
+              - "redshift:ResumeCluster"
+      PolicyName: VegaParkingPolicy
+      Roles:
+        - VegaOperator
