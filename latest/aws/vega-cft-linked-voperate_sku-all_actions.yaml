@@ -164,12 +164,12 @@ Resources:
       PolicyName: VegaDiscoveryReaderPolicy
       Roles:
         - VegaDiscoveryReader
-  VegaOperator:
+  VegaOptimizer:
     # This role and policy are used by the Vega Platform discover, tag resources, and optimize yoour account(s)
     # Optimize includes actions such as starting/stopping instances, modifying instance types, deleting snapshots
     # and purchasing Reserved Instance offerings.
     Properties:
-      RoleName: VegaOperator
+      RoleName: VegaOptimizer
       AssumeRolePolicyDocument:
         Statement:
           - Action: "sts:AssumeRole"
@@ -189,7 +189,7 @@ Resources:
         Version: 2012-10-17
     Type: "AWS::IAM::Role"
   OptimizerPolicy:
-    DependsOn: VegaOperator
+    DependsOn: VegaOptimizer
     Type: "AWS::IAM::Policy"
     Properties:
       PolicyDocument:

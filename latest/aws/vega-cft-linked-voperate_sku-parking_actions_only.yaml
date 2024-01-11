@@ -165,11 +165,11 @@ Resources:
       PolicyName: VegaDiscoveryReaderPolicy
       Roles:
         - VegaDiscoveryReader
-  VegaOperator:
+  VegaOptimizer:
     # This role and policy created by this CFT are used by the Vega Platform to park resources in your AWS account(s)
     # Optimize includes minimal permissions for such actions as starting/stopping instances, etc.
     Properties:
-      RoleName: VegaOperator
+      RoleName: VegaOptimizer
       AssumeRolePolicyDocument:
         Statement:
           - Action: "sts:AssumeRole"
@@ -189,7 +189,7 @@ Resources:
         Version: 2012-10-17
     Type: "AWS::IAM::Role"
   ParkingPolicy:
-    DependsOn: VegaOperator
+    DependsOn: VegaOptimizer
     Type: "AWS::IAM::Policy"
     Properties:
       PolicyDocument:
@@ -328,4 +328,4 @@ Resources:
               - "redshift:ResumeCluster"
       PolicyName: VegaParkingPolicy
       Roles:
-        - VegaOperator
+        - VegaOptimizer
