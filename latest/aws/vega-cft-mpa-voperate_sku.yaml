@@ -51,31 +51,31 @@ Resources:
         - VegaAdmin
       PolicyDocument:
         Statement:
-          - Sid: ComputeOptimizerAPIAccess
+          - Sid: VegaDiscoveryComputeOptimizer
             Action:
               - "compute-optimizer:Get*"
             Effect: "Allow"  
             Resource: "*"
-          - Sid: Stmt1561483568234
+          - Sid: VegaDiscoveryEC2
             Action:
               - "savingsplans:*"
             Effect: Allow
             Resource: "*"
-          - Sid: Stmt1561483568365
+          - Sid: VegaDiscoveryEC2
             Action:
               - "organizations:Describe*"
               - "organizations:List*"
             Effect: Allow
             Resource: "*"
             # Access to Pricing Data and Current Usage Report Definitions
-          - Sid: Stmt1651841132818
+          - Sid: VegaDiscoveryPricing
             Effect: Allow
             Action:
               - "pricing:*"
               - "cur:DescribeReportDefinitions"
             Resource: "*"
           # Cost Explorer API Readonly Access
-          - Sid: Stmt1651840873147
+          - Sid: VegaDiscoveryCostExplorer
             Effect: Allow
             Action:
               - "ce:DescribeCostCategoryDefinition"
@@ -103,7 +103,7 @@ Resources:
               - "ce:ListCostCategoryDefinitions"
               - "ce:ListTagsForResource"
             Resource: "*"
-          - Sid: Stmt1651841132810
+          - Sid: VegaDiscoveryBillingConductor
             Effect: Allow
             Action:
               - "billingconductor:ListAccountAssociations"
@@ -123,7 +123,7 @@ Resources:
     Properties:
       PolicyDocument:
         Statement:
-          - Sid: Stmt1651841132811
+          - Sid: VegaS3SyncPolicy
             Effect: Allow
             Action:
               - "s3:ListObjectsV2"
