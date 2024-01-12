@@ -1,8 +1,9 @@
+### DRAFT CFT TEMPLATE - DO NOT USE THIS TEMPLATE IN PRODUCTION ###
 Parameters:
   VegaExternalIdParameter:
     Type: String
-    Description: Vega Cloud's ExternalId for your environments (helps to authenticate role assumption).
-    Default: "vega:b57896e704c949788e36f28a1c5a116f"
+    Description: Vega Cloud's ExternalId for your environments (helps to authenticate role assumption). Get this from your Vega Representative.
+    Default: "vega:<get_id_from_vega_csm>"
 Resources:
   VegaDiscoveryReader:
     Properties:
@@ -29,16 +30,21 @@ Resources:
     DependsOn: VegaDiscoveryReader
     Type: "AWS::IAM::Policy"
     Properties:
+      PolicyName: VegaDiscoveryReaderPolicy
+      Roles:
+        - VegaDiscoveryReader
       PolicyDocument:
         Statement:
           # AWS Batch Discovery
-          - Effect: Allow
+          - Sid: VegDiscoveryReaderBatchDiscovery
+            Effect: Allow
             Resource: "*"
             Action:
               - "batch:Describe*"
               - "batch:List*"
           # CloudWatch Metrics Discovery
-          - Effect: Allow
+          - Sid: VegDiscoveryReaderCloudWatchDiscovery
+            Effect: Allow
             Resource: "*"
             Action:
               - "cloudwatch:GetMetricData"
@@ -46,7 +52,8 @@ Resources:
               - "cloudwatch:ListMetrics"
               - "cloudwatch:ListTagsForResource"
           # EC2 Resource Discovery
-          - Effect: Allow
+          - Sid: VegDiscoveryReaderEC2Discovery
+            Effect: Allow
             Resource: "*"
             Action:
               - "ec2:Describe*"
@@ -54,7 +61,8 @@ Resources:
               - "ec2:GetGroupsForCapacityReservation"
               - "ec2:GetHostReservationPurchasePreview"
           # RDS Resource Discovery
-          - Effect: Allow
+          - Sid: VegDiscoveryReaderRDSDiscovery
+            Effect: Allow
             Resource: "*"
             Action:
               - "rds:DescribeDBClusterSnapshots"
@@ -68,25 +76,29 @@ Resources:
               - "rds:DescribeDBSnapshots"
               - "rds:ListTagsForResource"
           # Elastic Container Service (ECS)
-          - Effect: Allow
+          - Sid: VegDiscoveryReaderECSDiscovery
+            Effect: Allow
             Resource: "*"
             Action:
               - "ecs:Describe*"
               - "ecs:List*"
           # Elastic Kubernetes Service (EKS)
-          - Effect: Allow
+          - Sid: VegDiscoveryReaderEKSDiscovery
+            Effect: Allow
             Resource: "*"
             Action:
               - "eks:Describe*"
               - "eks:List*"
           # ElastiCache Resource  Discovery
-          - Effect: Allow
+          - Sid: VegDiscoveryReaderElastiCacheDiscovery
+            Effect: Allow
             Resource: "*"
             Action:
               - "elasticache:Describe*"
               - "elasticache:List*"
           # Redshift Resource Discovery
-          - Effect: Allow
+          - Sid: VegDiscoveryReaderRedshiftDiscovery
+            Effect: Allow
             Resource: "*"
             Action:
               - "redshift:DescribeReservedNodes"
@@ -99,14 +111,16 @@ Resources:
               - "redshift:GetReservedNodeExchangeOfferings"
               - "redshift:GetReservedNodeExchangeConfigurationOptions"
           # DynamoDB Resource Discovery
-          - Effect: Allow
+          - Sid: VegDiscoveryReaderDynamoDBDiscovery
+            Effect: Allow
             Resource: "*"
             Action:
               - "dynamodb:DescribeReservedCapacity"
               - "dynamodb:DescribeReservedCapacityOfferings"
               - "dynamodb:ListTagsOfResource"
           # Opensearch Resource Discovery
-          - Effect: Allow
+          - Sid: VegDiscoveryReaderOpensearchDiscovery
+            Effect: Allow
             Resource: "*"
             Action:
               - "es:DescribeReservedElasticsearchInstances"
@@ -115,14 +129,16 @@ Resources:
               - "es:DescribeReservedInstanceOfferings"
               - "es:ListTags"
           # Medialive Resource Discovery
-          - Effect: Allow
+          - Sid: VegDiscoveryReaderMedialiveDiscovery
+            Effect: Allow
             Resource: "*"
             Action:
               - "medialive:DescribeReservation"
               - "medialive:ListReservations"
               - "medialive:ListTagsForResource"
           # Trusted Advisor Resource Discovery
-          - Effect: Allow
+          - Sid: VegDiscoveryReaderTrustedAdvisorDiscovery
+            Effect: Allow
             Resource: "*"
             Action:
               - "support:DescribeTrustedAdvisorCheckRefreshStatuses"
@@ -132,12 +148,14 @@ Resources:
               - "support:RefreshTrustedAdvisorCheck"
               - "trustedadvisor:Describe*"
           # Savings Plan Resource Discovery
-          - Effect: Allow
+          - Sid: VegDiscoveryReaderSavingsPlanDiscovery
+            Effect: Allow
             Resource: "*"
             Action:
               - "savingsplans:*"
           # Compute Optimizer Resource Discovery
-          - Effect: Allow
+          - Sid: VegDiscoveryReaderComputeOptimizerDiscovery
+            Effect: Allow
             Resource: "*"
             Action:
               - "compute-optimizer:GetAutoScalingGroupRecommendations"
@@ -151,7 +169,8 @@ Resources:
               - "compute-optimizer:GetRecommendationPreferences"
               - "compute-optimizer:GetRecommendationSummaries"
           # S3 Resource Discovery
-          - Effect: Allow
+          - Sid: VegDiscoveryReaderS3Discovery
+            Effect: Allow
             Resource: "*"
             Action:
               # Note: Get* is filtered with an explicit deny on GetObject below.
@@ -161,9 +180,6 @@ Resources:
               - "s3:GetObject"
             Effect: Deny
             Resource: "*"
-      PolicyName: VegaDiscoveryReaderPolicy
-      Roles:
-        - VegaDiscoveryReader
   VegaOptimizer:
     # This role and policy are used by the Vega Platform discover, tag resources, and optimize yoour account(s)
     # Optimize includes actions such as starting/stopping instances, modifying instance types, deleting snapshots
@@ -195,7 +211,8 @@ Resources:
       PolicyDocument:
         Statement:
           # CloudWatch Metrics Discovery
-          - Effect: Allow
+          - Sid: VegaOptimizerCloudWatchDiscovery
+            Effect: Allow
             Resource: "*"
             Action:
               - "cloudwatch:GetMetricData"
@@ -203,15 +220,18 @@ Resources:
               - "cloudwatch:ListMetrics"
               - "cloudwatch:ListTagsForResource"
           # EC2 Resource Discovery
-          - Effect: Allow
+          - Sid: VegaOptimizerEC2Discovery
+            Effect: Allow
             Resource: "*"
             Action:
               - "ec2:Describe*"
               - "ec2:GetCapacityReservationUsage"
               - "ec2:GetGroupsForCapacityReservation"
               - "ec2:GetHostReservationPurchasePreview"
-          # EC2 FinOps Optimize
-          - Effect: Allow
+              - "ec2:List*"
+          # EC2 Operate
+          - Sid: VegaOptimizerEC2Optimize
+            Effect: Allow
             Resource: "*"
             Action:
               - "ec2:ModifyInstanceAttribute"
@@ -233,7 +253,8 @@ Resources:
               - "ec2:EnableImageDeprecation"
               - "ec2:DeleteSnapshot"
           # RDS Resource Discovery
-          - Effect: Allow
+          - Sid: VegaOptimizerRDSDiscovery
+            Effect: Allow
             Resource: "*"
             Action:
               - "rds:DescribeDBClusterSnapshots"
@@ -246,8 +267,10 @@ Resources:
               - "rds:DescribeDBInstances"
               - "rds:DescribeDBSnapshots"
               - "rds:ListTagsForResource" 
+              - "rds:List*"
           # RDS FinOps Optimize
-          - Effect: Allow
+          - Sid: VegaOptimizerRDSOptimize
+            Effect: Allow
             Resource: "*"
             Action:
               - "rds:DeleteDBClusterSnapshot"
@@ -269,25 +292,123 @@ Resources:
               - "rds:ModifyCurrentDBClusterCapacity"
               - "rds:DeleteBlueGreenDeployment"
           # Elastic Container Service (ECS)
-          - Effect: Allow
+          - Sid: VegaOptimizerECSDiscovery
+            Effect: Allow
             Resource: "*"
             Action:
               - "ecs:Describe*"
               - "ecs:List*"
+          # Elastic Container Service (ECS) Optimize
+          - Sid: VegaOptimizerECSOptimize
+            Effect: Allow
+            Resource: "*"
+            Action:
+              - "ecs:UpdateService"
+              - "ecs:RunTask"
+              - "ecs:StartTask"
+              - "ecs:StopTask"
+              - "ecs:DeleteService"
+              - "ecs:CreateService"
+              - "ecs:DeleteCluster"
+              - "ecs:DeleteTaskSet"
+              - "ecs:UpdateTaskSet"
+              - "ecs:UpdateClusterSettings"
+              - "ecs:UpdateContainerAgent"
+              - "ecs:UpdateContainerInstancesState"
+              - "ecs:UpdateServicePrimaryTaskSet"
+              - "ecs:UpdateTaskSet"
+              - "ecs:UpdateService"
+              - "ecs:UpdateContainerInstancesState"
+              - "ecs:UpdateServicePrimaryTaskSet"
+              - "ecs:UpdateTaskSet"
+              - "ecs:UpdateService"
+              - "ecs:UpdateContainerInstancesState"
+              - "ecs:UpdateServicePrimaryTaskSet"
+              - "ecs:UpdateTaskSet"
+              - "ecs:UpdateService"
+              - "ecs:UpdateContainerInstancesState"
+              - "ecs:UpdateServicePrimaryTaskSet"
+              - "ecs:UpdateTaskSet"
+              - "ecs:UpdateService"
+              - "ecs:UpdateContainerInstancesState"
+              - "ecs:UpdateServicePrimaryTaskSet"
+              - "ecs:UpdateTaskSet"
+              - "ecs:UpdateService"
+              - "ecs:UpdateContainerInstancesState"
+              - "ecs:UpdateServicePrimaryTaskSet"
+              - "ecs:UpdateTaskSet"
+              - "ecs:UpdateService"
+              - "ecs:UpdateContainerInstancesState"
+              - "ecs:UpdateServicePrimaryTaskSet"
+              - "ecs:UpdateTaskSet"
+              - "ecs:UpdateService"
+              - "ecs:UpdateContainerInstancesState"
+              - "ecs:UpdateServicePrimaryTaskSet"
+              - "ecs:UpdateTaskSet"
           # Elastic Kubernetes Service (EKS)
-          - Effect: Allow
+          - Sid: VegaOptimizerEKSDiscovery
+            Effect: Allow
             Resource: "*"
             Action:
               - "eks:Describe*"
               - "eks:List*"
+          # Elastic Kubernetes Service (EKS) Optimize
+          - Sid: VegaOptimizerEKSOptimize
+            Effect: Allow
+            Resource: "*"
+            Action:
+              - "eks:CreateNodegroup"
+              - "eks:DeleteNodegroup"
+              - "eks:UpdateNodegroupConfig"
+              - "eks:UpdateNodegroupVersion"
+              - "eks:UpdateClusterConfig"
+              - "eks:UpdateClusterVersion"
+              - "eks:CreateFargateProfile"
+              - "eks:DeleteFargateProfile"
+              - "eks:UpdateFargateProfile"
+              - "eks:CreateAddon"
+              - "eks:DeleteAddon"
+              - "eks:UpdateAddon"
+              - "eks:CreateCluster"
+              - "eks:DeleteCluster"
+              - "eks:TagResource"
+              - "eks:UntagResource"
+              - "eks:AssociateEncryptionConfig"
+              - "eks:DisassociateEncryptionConfig"
+              - "eks:CreateClusterConfig"
+              - "eks:DeleteClusterConfig"
+              - "eks:CreateClusterVersion"
+              - "eks:DeleteClusterVersion"
+              - "eks:CreateNodegroupConfig"
+              - "eks:DeleteNodegroupConfig"
+              - "eks:CreateNodegroupVersion"
+              - "eks:DeleteNodegroupVersion"
+              - "eks:CreateAddonConfig"
+              - "eks:DeleteAddonConfig"
+              - "eks:CreateAddonVersion"
+              - "eks:DeleteAddonVersion"
+              - "eks:CreateClusterConfig"
+              - "eks:DeleteClusterConfig"
+              - "eks:CreateClusterVersion"
+              - "eks:DeleteClusterVersion"
+              - "eks:CreateNodegroupConfig"
+              - "eks:DeleteNodegroupConfig"
+              - "eks:CreateNodegroupVersion"
+              - "eks:DeleteNodegroupVersion"
+              - "eks:CreateFargateProfileConfig"
+              - "eks:DeleteFargateProfileConfig"
+              - "eks:CreateFargateProfileVersion"
+              - "eks:DeleteFargateProfileVersion"              
           # ElastiCache Resource Discovery
-          - Effect: Allow
+          - Sid: VegaOptimizerElastiCacheDiscovery
+            Effect: Allow
             Resource: "*"
             Action:
               - "elasticache:Describe*"
               - "elasticache:List*"
           # ElastiCache Operate
-          - Effect: Allow
+          - Sid: VegaOptimizerElastiCacheOptimize
+            Effect: Allow
             Resource: "*"
             Action:
               - "elasticache:DecreaseReplicaCount"
@@ -302,7 +423,8 @@ Resources:
               - "elasticache:RebalanceSlotsInGlobalReplicationGroup"
               - "elasticache:StartMigration"
           # Redshift Resource Discovery
-          - Effect: Allow
+          - Sid: VegaOptimizerRedshiftDiscovery
+            Effect: Allow
             Resource: "*"
             Action:
               - "redshift:DescribeReservedNodes"
@@ -314,8 +436,10 @@ Resources:
               - "redshift:DescribeTags"
               - "redshift:GetReservedNodeExchangeOfferings"
               - "redshift:GetReservedNodeExchangeConfigurationOptions"
+              - "redshift:List*"
           # Redshift Operate
-          - Effect: Allow
+          - Sid: VegaOptimizerRedshiftOptimize
+            Effect: Allow
             Resource: "*"
             Action:
               - "redshift:PauseCluster"
@@ -332,7 +456,8 @@ Resources:
               - "redshift:AcceptReservedNodeExchange"
               - "redshift:PurchaseReservedNodeOffering"
           # DynamoDB Resource Discovery
-          - Effect: Allow
+          - Sid: VegaOptimizerDynamoDBDiscovery
+            Effect: Allow
             Resource: "*"
             Action:
               - "dynamodb:DescribeReservedCapacity"
@@ -341,14 +466,16 @@ Resources:
               - "dynamodb:Describe*"
               - "dynamodb:List*"
           # DynamoDB Operate
-          - Effect: Allow
+          - Sid: VegaOptimizerDynamoDBOptimize
+            Effect: Allow
             Resource: "*"
             Action:
               - "dynamodb:PurchaseReservedCapacityOfferings"
               - "dynamodb:DeleteBackup"
               - "dynamodb:UpdateContinuousBackups"
           # Opensearch Resource Discovery
-          - Effect: Allow
+          - Sid: VegaOptimizerOpensearchDiscovery
+            Effect: Allow
             Resource: "*"
             Action:
               - "es:DescribeReservedElasticsearchInstances"
@@ -357,26 +484,30 @@ Resources:
               - "es:DescribeReservedInstanceOfferings"
               - "es:ListTags"
           # Opensearch Operate
-          - Effect: Allow
+          - Sid: VegaOptimizerOpensearchOptimize
+            Effect: Allow
             Resource: "*"
             Action:
               - "es:PurchaseReservedElasticsearchInstanceOffering"
               - "es:PurchaseReservedInstanceOffering"
           # Medialive Resource Discovery
-          - Effect: Allow
+          - Sid: VegaOptimizerMedialiveDiscovery
+            Effect: Allow
             Resource: "*"
             Action:
               - "medialive:DescribeReservation"
               - "medialive:ListReservations"
               - "medialive:ListTagsForResource"
           # Medialive Operate
-          - Effect: Allow
+          - Sid: VegaOptimizerMedialiveOptimize
+            Effect: Allow
             Resource: "*"
             Action:
               - "medialive:PurchaseOffering"
               - "medialive:UpdateReservation"
           # Trusted Advisor Resource Discovery
-          - Effect: Allow
+          - Sid: VegaOptimizerTrustedAdvisorDiscovery
+            Effect: Allow
             Resource: "*"
             Action:
               - "support:DescribeTrustedAdvisorCheckRefreshStatuses"
@@ -386,12 +517,14 @@ Resources:
               - "support:RefreshTrustedAdvisorCheck"
               - "trustedadvisor:Describe*"
           # Savings Plan Operate
-          - Effect: Allow
+          - Sid: VegaOptimizerSavingsPlanOptimize
+            Effect: Allow
             Resource: "*"
             Action:
               - "savingsplans:*"
           # Compute Optimizer Resource Discovery
-          - Effect: Allow
+          - Sid: VegaOptimizerComputeOptimizerDiscovery
+            Effect: Allow
             Resource: "*"
             Action:
               - "compute-optimizer:GetAutoScalingGroupRecommendations"
@@ -405,7 +538,8 @@ Resources:
               - "compute-optimizer:GetRecommendationPreferences"
               - "compute-optimizer:GetRecommendationSummaries"
           # S3 Resource Discovery
-          - Effect: Allow
+          - Sid: VegaOptimizerS3Discovery
+            Effect: Allow
             Resource: "*"
             Action:
               # Note: Get* is filtered with an explicit deny on GetObject below.
@@ -416,11 +550,18 @@ Resources:
             Effect: Deny
             Resource: "*"
           # s3 FinOps Operate
-          - Effect: Allow
+          - Sid: VegaOptimizerS3Optimize
+            Effect: Allow
             Resource: "*"
             Action:
               - "s3:PutLifecycleConfiguration"
               - "s3:DeleteLifecycleConfiguration"
+              - "s3:PutBucketVersioning"
+              - "s3:PutBucketLifecycleConfiguration"
+              - "s3:PutBucketReplication"              
+              - "s3:PutBucketLogging"
+              - "s3:PutBucketRequestPayment"
+              - "s3:PutBucketTagging"              
       PolicyName: VegaOptimizerPolicy
       Roles:
         - VegaOptimizer

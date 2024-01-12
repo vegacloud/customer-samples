@@ -46,6 +46,9 @@ Resources:
     DependsOn: VegaAdminRole
     Type: "AWS::IAM::Policy"
     Properties:
+      PolicyName: VegaDiscoveryPolicy
+      Roles:
+        - VegaAdmin
       PolicyDocument:
         Statement:
           - Sid: ComputeOptimizerAPIAccess
@@ -114,9 +117,6 @@ Resources:
               - "billingconductor:ListResourcesAssociatedToCustomLineItem"
               - "billingconductor:ListTagsForResource"
             Resource: "*"
-      PolicyName: llcvegadiscoverypolicy
-      Roles:
-        - VegaAdmin
   S3SyncPolicy:
     DependsOn: VegaAdminRole
     Type: "AWS::IAM::Policy"
@@ -141,6 +141,6 @@ Resources:
               - "s3:AbortMultipartUpload"
             # Add any additional S3 buckets below
             Resource: !Split [",", !Ref CurBucketsParameter]
-      PolicyName: llcvegasyncpolicy
+      PolicyName: VegaS3SyncPolicy
       Roles:
         - VegaAdmin

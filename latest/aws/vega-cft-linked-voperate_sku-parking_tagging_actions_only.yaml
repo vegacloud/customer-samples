@@ -1,8 +1,8 @@
 Parameters:
   VegaExternalIdParameter:
     Type: String
-    Description: Vega Cloud's ExternalId for your environments (helps to authenticate role assumption).
-    Default: "vega:b57896e704c949788e36f28a1c5a116f"
+    Description: Vega Cloud's ExternalId for your environments (helps to authenticate role assumption). Please contact Vega Cloud for your ExternalId.
+    Default: "vega:<get_id_from_vega_csm>"
 Resources:
   VegaDiscoveryReader:
     Properties:
@@ -29,16 +29,21 @@ Resources:
     DependsOn: VegaDiscoveryReader
     Type: "AWS::IAM::Policy"
     Properties:
+      PolicyName: VegaDiscoveryReaderPolicy
+      Roles:
+        - VegaDiscoveryReader
       PolicyDocument:
         Statement:
           # AWS Batch Discovery
           - Effect: Allow
+            Sid: VegaDiscoveryReaderBatchDiscovery
             Resource: "*"
             Action:
               - "batch:Describe*"
               - "batch:List*"
           # CloudWatch Metrics Discovery
           - Effect: Allow
+            Sid: VegaDiscoveryReaderCloudWatchMetricsDiscovery
             Resource: "*"
             Action:
               - "cloudwatch:GetMetricData"
@@ -47,6 +52,7 @@ Resources:
               - "cloudwatch:ListTagsForResource"
           # EC2 Resource Discovery
           - Effect: Allow
+            Sid: VegaDiscoveryReaderEC2Discovery
             Resource: "*"
             Action:
               - "ec2:Describe*"
@@ -55,6 +61,7 @@ Resources:
               - "ec2:GetHostReservationPurchasePreview"
           # RDS Resource Discovery
           - Effect: Allow
+            Sid: VegaDiscoveryReaderRDSDiscovery
             Resource: "*"
             Action:
               - "rds:DescribeDBClusterSnapshots"
@@ -69,24 +76,28 @@ Resources:
               - "rds:ListTagsForResource"
           # Elastic Container Service (ECS)
           - Effect: Allow
+            Sid: VegaDiscoveryReaderECSDiscovery
             Resource: "*"
             Action:
               - "ecs:Describe*"
               - "ecs:List*"
           # Elastic Kubernetes Service (EKS)
           - Effect: Allow
+            Sid: VegaDiscoveryReaderEKSDiscovery
             Resource: "*"
             Action:
               - "eks:Describe*"
               - "eks:List*"
           # ElastiCache Resource  Discovery
           - Effect: Allow
+            Sid: VegaDiscoveryReaderElastiCacheDiscovery
             Resource: "*"
             Action:
               - "elasticache:Describe*"
               - "elasticache:List*"
           # Redshift Resource Discovery
           - Effect: Allow
+            Sid: VegaDiscoveryReaderRedshiftDiscovery
             Resource: "*"
             Action:
               - "redshift:DescribeReservedNodes"
@@ -100,6 +111,7 @@ Resources:
               - "redshift:GetReservedNodeExchangeConfigurationOptions"
           # DynamoDB Resource Discovery
           - Effect: Allow
+            Sid: VegaDiscoveryReaderDynamoDBDiscovery
             Resource: "*"
             Action:
               - "dynamodb:DescribeReservedCapacity"
@@ -107,6 +119,7 @@ Resources:
               - "dynamodb:ListTagsOfResource"
           # Opensearch Resource Discovery
           - Effect: Allow
+            Sid: VegaDiscoveryReaderOpensearchDiscovery
             Resource: "*"
             Action:
               - "es:DescribeReservedElasticsearchInstances"
@@ -116,6 +129,7 @@ Resources:
               - "es:ListTags"
           # Medialive Resource Discovery
           - Effect: Allow
+            Sid: VegaDiscoveryReaderMedialiveDiscovery
             Resource: "*"
             Action:
               - "medialive:DescribeReservation"
@@ -123,6 +137,7 @@ Resources:
               - "medialive:ListTagsForResource"
           # Trusted Advisor Resource Discovery
           - Effect: Allow
+            Sid: VegaDiscoveryReaderTrustedAdvisorDiscovery
             Resource: "*"
             Action:
               - "support:DescribeTrustedAdvisorCheckRefreshStatuses"
@@ -133,11 +148,13 @@ Resources:
               - "trustedadvisor:Describe*"
           # Savings Plan Resource Discovery
           - Effect: Allow
+            Sid: VegaDiscoveryReaderSavingsPlanDiscovery
             Resource: "*"
             Action:
               - "savingsplans:*"
           # Compute Optimizer Resource Discovery
           - Effect: Allow
+            Sid: VegaDiscoveryReaderComputeOptimizerDiscovery
             Resource: "*"
             Action:
               - "compute-optimizer:GetAutoScalingGroupRecommendations"
@@ -152,6 +169,7 @@ Resources:
               - "compute-optimizer:GetRecommendationSummaries"
           # S3 Resource Discovery
           - Effect: Allow
+            Sid: VegaDiscoveryReaderS3Discovery
             Resource: "*"
             Action:
               # Note: Get* is filtered with an explicit deny on GetObject below.
@@ -161,9 +179,6 @@ Resources:
               - "s3:GetObject"
             Effect: Deny
             Resource: "*"
-      PolicyName: VegaDiscoveryReaderPolicy
-      Roles:
-        - VegaDiscoveryReader
   VegaOptimizer:
     # This role and policy are used by the Vega Platform discover, tag resources, and optimize yoour account(s)
     # Optimize includes minimal permission for such actions as starting/stopping instances, modifying instance types
@@ -191,10 +206,14 @@ Resources:
     DependsOn: VegaOptimizer
     Type: "AWS::IAM::Policy"
     Properties:
+      PolicyName: VegaParkingPolicy
+      Roles:
+        - VegaOptimizer
       PolicyDocument:
         Statement:
           # General Parking Requirements
           - Effect: Allow
+            Sid: VegaOptimizerGeneralParkingRequirements
             Resource: "*"
             Action:          
               - "autoscaling:DescribeAutoScalingGroups"
@@ -209,6 +228,7 @@ Resources:
               - "iam:PassRole"    
           # CloudWatch Metrics Discovery
           - Effect: Allow
+            Sid: VegaOptimizerCloudWatchMetricsDiscovery
             Resource: "*"
             Action:
               - "cloudwatch:GetMetricData"
@@ -218,11 +238,14 @@ Resources:
               - "cloudwatch:DescribeAlarmsForMetric"
           # EC2 Resource Discovery
           - Effect: Allow
+            Sid: VegaOptimizerEC2Discovery
             Resource: "*"
             Action:
               - "ec2:Describe*"
+              - "ec2:List*"
           # EC2 Parking
           - Effect: Allow
+            Sid: VegaOptimizerEC2Parking
             Resource: "*"
             Action:
               - "ec2:RunInstances"              
@@ -230,13 +253,16 @@ Resources:
               - "ec2:StopInstances"
           # Load Balancer Resource Discovery
           - Effect: Allow
+            Sid: VegaOptimizerLoadBalancerDiscovery
             Resource: "*"
             Action:
               - "elasticloadbalancing:Describe*"
               - "elasticloadbalancing:List*"
               - "ec2:Describe*"
+              - "ec2:List*"
           # Load Balancer Parking
           - Effect: Allow
+            Sid: VegaOptimizerLoadBalancerParking
             Resource: "*"
             Action:              
               - "elasticloadbalancing:RegisterTargets"
@@ -245,12 +271,15 @@ Resources:
               - "ec2:StopInstances"
           # RDS Resource Discovery
           - Effect: Allow
+            Sid: VegaOptimizerRDSDiscovery
             Resource: "*"
             Action:
               - "rds:DescribeDBClusters"
               - "rds:DescribeDBInstances"
+              - "rds:List*"
           # RDS Parking
           - Effect: Allow
+            Sid: VegaOptimizerRDSParking
             Resource: "*"
             Action:
               - "rds:StartDBCluster"
@@ -259,30 +288,28 @@ Resources:
               - "rds:StopDBInstance"
           # Redshift Resource Discovery
           - Effect: Allow
+            Sid: VegaOptimizerRedshiftDiscovery
             Resource: "*"
             Action:
               - "redshift:DescribeReservedNodes"
               - "redshift:DescribeReservedNodeExchangeStatus"
               - "redshift:DescribeReservedNodeOfferings"
               - "redshift:DescribeClusters"
-              - "redshift:DescribeClusterSnapshots"
               - "redshift:DescribeStorage"
-              - "redshift:DescribeTags"
-              - "redshift:GetReservedNodeExchangeOfferings"
-              - "redshift:GetReservedNodeExchangeConfigurationOptions"
           # Park Redshift
           - Effect: Allow
+            Sid: VegaOptimizerRedshiftParking
             Resource: "*"
             Action:
               - "redshift:PauseCluster"
               - "redshift:ResumeCluster"
-      PolicyName: VegaParkingPolicy
-      Roles:
-        - VegaOptimizer
   TaggingPolicy:
     DependsOn: VegaOptimizer
     Type: "AWS::IAM::Policy"
     Properties:
+      PolicyName: VegaTaggingPolicy
+      Roles:
+        - VegaOptimizer
       PolicyDocument:
         Statement:        
           - Effect: Allow
