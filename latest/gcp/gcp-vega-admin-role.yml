@@ -1,20 +1,46 @@
-title: "Vega Platform Integration Role for GCP"
-description: "Access to billing, bigquery, and other reporting resources"
-stage: "GA"
+title: Vega Platform Integration Role for GCP
+description: Access to billing, bigquery, and other reporting resources. Access to billing, bigquery, and other reporting resources. Please enable the Cloud Resource Manager, Compute Engine, Cloud Billing,BigQuery APIs.
+stage: GA
 includedPermissions:
+  - automlrecommendations.catalogItems.get
+  - automlrecommendations.catalogItems.list
+  - automlrecommendations.catalogs.getStats
+  - automlrecommendations.catalogs.list
+  - automlrecommendations.events.get
+  - automlrecommendations.events.list
+  - automlrecommendations.eventStores.getStats
+  - automlrecommendations.eventStores.list
+  - automlrecommendations.placements.getStats
+  - automlrecommendations.placements.list
+  - automlrecommendations.recommendations.list
   - bigquery.jobs.create
   - bigquery.jobs.list
   - bigquery.jobs.listAll
   - bigquery.readsessions.getData
+  - bigquery.tables.export
+  - bigquery.tables.get
   - bigquery.tables.getData
   - bigquery.tables.list
-  - bigquery.tables.export
-  - resourcemanager.projects.get
+  - billing.accounts.list
+  - billing.resourceAssociations.list
+  - compute.commitments.list
+  - compute.disks.get
+  - compute.disks.list
+  - compute.diskTypes.list
+  - compute.images.list
+  - compute.instanceGroupManagers.get
+  - compute.instanceGroupManagers.list
+  - compute.instances.get
   - compute.instances.list
   - compute.machineTypes.get
-  - compute.disks.list
+  - compute.machineTypes.list
+  - compute.regions.list
   - compute.snapshots.list
-  - compute.images.list
+  - compute.zones.list
+  - logging.views.get
+  - logging.views.list
+  - monitoring.services.get
+  - monitoring.services.list
   - monitoring.timeSeries.list
   - recommender.bigqueryCapacityCommitmentsInsights.get
   - recommender.bigqueryCapacityCommitmentsInsights.list
@@ -98,9 +124,9 @@ includedPermissions:
   - recommender.computeDiskIdleResourceInsights.list
   - recommender.computeDiskIdleResourceRecommendations.get
   - recommender.computeDiskIdleResourceRecommendations.list
-  - recommender.computeFirewallInsightTypeConfigs.get
   - recommender.computeFirewallInsights.get
   - recommender.computeFirewallInsights.list
+  - recommender.computeFirewallInsightTypeConfigs.get
   - recommender.computeImageIdleResourceInsights.get
   - recommender.computeImageIdleResourceInsights.list
   - recommender.computeImageIdleResourceRecommendations.get
@@ -209,9 +235,9 @@ includedPermissions:
   - recommender.resourcemanagerProjectChangeRiskInsights.list
   - recommender.resourcemanagerProjectChangeRiskRecommendations.get
   - recommender.resourcemanagerProjectChangeRiskRecommendations.list
-  - recommender.resourcemanagerProjectUtilizationInsightTypeConfigs.get
   - recommender.resourcemanagerProjectUtilizationInsights.get
   - recommender.resourcemanagerProjectUtilizationInsights.list
+  - recommender.resourcemanagerProjectUtilizationInsightTypeConfigs.get
   - recommender.resourcemanagerProjectUtilizationRecommendations.get
   - recommender.resourcemanagerProjectUtilizationRecommendations.list
   - recommender.resourcemanagerProjectUtilizationRecommenderConfigs.get
@@ -238,3 +264,37 @@ includedPermissions:
   - recommender.spendBasedCommitmentRecommenderConfig.get
   - recommender.usageCommitmentRecommendations.get
   - recommender.usageCommitmentRecommendations.list
+  - resourcemanager.folders.get
+  - resourcemanager.folders.list
+  - resourcemanager.organizations.get
+  - resourcemanager.projects.get
+  - resourcemanager.projects.list
+  - retail.catalogs.list
+  - retail.operations.get
+  - retail.operations.list
+  - retail.placements.predict
+  - retail.placements.search
+  - retail.products.export
+  - retail.products.get
+  - retail.products.list
+  - retail.retailProjects.get
+  - serviceusage.services.get
+  - serviceusage.services.list
+  - automlrecommendations.apiKeys.create
+  - automlrecommendations.apiKeys.delete
+  - automlrecommendations.apiKeys.list
+  - automlrecommendations.catalogItems.create
+  - automlrecommendations.catalogItems.delete
+  - automlrecommendations.events.create
+  - automlrecommendations.events.purge
+  - automlrecommendations.events.rejoin
+  - automlrecommendations.placements.create
+  - automlrecommendations.placements.delete
+  - automlrecommendations.recommendations.create
+  - automlrecommendations.recommendations.delete
+  - automlrecommendations.recommendations.pause
+  - automlrecommendations.recommendations.resume
+  - discoveryengine.servingConfigs.recommend
+  - recommender.costRecommendations.listAll
+  - recommender.costRecommendations.summarizeAll
+  - recommender.resources.export
