@@ -1,4 +1,3 @@
-### DRAFT CFT TEMPLATE - DO NOT USE THIS TEMPLATE IN PRODUCTION ###
 Parameters:
   VegaExternalIdParameter:
     Type: String
@@ -67,7 +66,6 @@ Resources:
             Action:
               - "rds:DescribeDBClusterSnapshots"
               - "rds:DescribeDBClusters"
-              - "rds:DescribeDBClusterSnapshots"
               - "rds:DescribeRecommendationGroups"
               - "rds:DescribeRecommendations"
               - "rds:DescribeReservedDBInstances"
@@ -259,7 +257,6 @@ Resources:
             Action:
               - "rds:DescribeDBClusterSnapshots"
               - "rds:DescribeDBClusters"
-              - "rds:DescribeDBClusterSnapshots"
               - "rds:DescribeRecommendationGroups"
               - "rds:DescribeRecommendations"
               - "rds:DescribeReservedDBInstances"
@@ -316,35 +313,6 @@ Resources:
               - "ecs:UpdateContainerAgent"
               - "ecs:UpdateContainerInstancesState"
               - "ecs:UpdateServicePrimaryTaskSet"
-              - "ecs:UpdateTaskSet"
-              - "ecs:UpdateService"
-              - "ecs:UpdateContainerInstancesState"
-              - "ecs:UpdateServicePrimaryTaskSet"
-              - "ecs:UpdateTaskSet"
-              - "ecs:UpdateService"
-              - "ecs:UpdateContainerInstancesState"
-              - "ecs:UpdateServicePrimaryTaskSet"
-              - "ecs:UpdateTaskSet"
-              - "ecs:UpdateService"
-              - "ecs:UpdateContainerInstancesState"
-              - "ecs:UpdateServicePrimaryTaskSet"
-              - "ecs:UpdateTaskSet"
-              - "ecs:UpdateService"
-              - "ecs:UpdateContainerInstancesState"
-              - "ecs:UpdateServicePrimaryTaskSet"
-              - "ecs:UpdateTaskSet"
-              - "ecs:UpdateService"
-              - "ecs:UpdateContainerInstancesState"
-              - "ecs:UpdateServicePrimaryTaskSet"
-              - "ecs:UpdateTaskSet"
-              - "ecs:UpdateService"
-              - "ecs:UpdateContainerInstancesState"
-              - "ecs:UpdateServicePrimaryTaskSet"
-              - "ecs:UpdateTaskSet"
-              - "ecs:UpdateService"
-              - "ecs:UpdateContainerInstancesState"
-              - "ecs:UpdateServicePrimaryTaskSet"
-              - "ecs:UpdateTaskSet"
           # Elastic Kubernetes Service (EKS)
           - Sid: VegaOptimizerEKSDiscovery
             Effect: Allow
@@ -387,14 +355,6 @@ Resources:
               - "eks:DeleteAddonConfig"
               - "eks:CreateAddonVersion"
               - "eks:DeleteAddonVersion"
-              - "eks:CreateClusterConfig"
-              - "eks:DeleteClusterConfig"
-              - "eks:CreateClusterVersion"
-              - "eks:DeleteClusterVersion"
-              - "eks:CreateNodegroupConfig"
-              - "eks:DeleteNodegroupConfig"
-              - "eks:CreateNodegroupVersion"
-              - "eks:DeleteNodegroupVersion"
               - "eks:CreateFargateProfileConfig"
               - "eks:DeleteFargateProfileConfig"
               - "eks:CreateFargateProfileVersion"

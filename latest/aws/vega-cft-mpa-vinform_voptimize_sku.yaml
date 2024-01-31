@@ -104,14 +104,10 @@ Resources:
           - Sid: Stmt1651841132811
             Effect: Allow
             Action:
-              - "s3:ListObjectsV2"
-              - "s3:CopyObject"
               - "s3:GetBucketLocation"
               - "s3:GetObjectTagging"
-              - "s3:GetBucketLocation"
               - "s3:GetObject"
               - "s3:GetAccountPublicAccessBlock"
-              - "s3:GetObjectTagging"
               - "s3:GetBucketTagging"
               - "s3:ListBucket"
               - "s3:ListBucketMultipartUploads"
