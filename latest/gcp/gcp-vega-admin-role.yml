@@ -1,8 +1,8 @@
 title: Vega Platform Integration Role for GCP
 description: >
   Access to billing, bigquery, and other reporting resources.  Please
-  enable the Cloud Resource Manager, Compute Engine,  Cloud Billing, and
-  BigQuery APIs
+  enable the Cloud Resource Manager, Compute Engine, Cloud Billing,
+  Cloud Recommender, and BigQuery APIs.
 stage: GA
 includedPermissions:
   - automlrecommendations.catalogItems.get
