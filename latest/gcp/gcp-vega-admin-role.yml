@@ -13,6 +13,7 @@ description: >
     Kubernetes Engine API
     Dataproc API
     BigQuery API
+    BigQuery Storage API
 stage: GA
 includedPermissions:
   - appengine.applications.get
@@ -310,8 +311,5 @@ includedPermissions:
   - resourcemanager.projects.get
   - run.revisions.list
   - run.services.list
-  - secretmanager.secrets.get
-  - secretmanager.secrets.list
-  - secretmanager.versions.list
   - storage.buckets.get
   - storage.buckets.list
