@@ -1,23 +1,88 @@
-title: Vega Platform Integration Role for GCP
+---
+title: Vega Platform Least Priviledge Integration Role for GCP
 description: >
-  Access to billing, bigquery, and other reporting resources.  Please
-  enable the Cloud Resource Manager, Compute Engine, Cloud Billing,
-  Cloud Recommender, and BigQuery APIs.
+  Access to discover & read billing, bigquery, and other reporting
+  resources. Includes the  compute.projects.setUsageExportBucket permission for
+  automated setup. Also includes bigquery.readsessions.create to stream large
+  billing data datasets. Please enable the following apis before proceeding:
+    Google Compute Engine API
+    Google Cloud Storage API
+    Google Cloud Resource Manager API
+    Google Cloud Storage JSON API
+    Recommender API
+    Kubernetes Engine API
+    Dataproc API
+    BigQuery API
 stage: GA
 includedPermissions:
+  - appengine.applications.get
+  - appengine.services.get
+  - appengine.services.list
+  - appengine.versions.get
+  - appengine.versions.list
+  - bigquery.datasets.get
   - bigquery.jobs.create
   - bigquery.jobs.list
   - bigquery.jobs.listAll
+  - bigquery.readsessions.create
   - bigquery.readsessions.getData
+  - bigquery.tables.export
+  - bigquery.tables.get
   - bigquery.tables.getData
   - bigquery.tables.list
-  - bigquery.tables.export
-  - resourcemanager.projects.get
-  - compute.instances.list
-  - compute.machineTypes.get
+  - bigtable.backups.get
+  - bigtable.backups.list
+  - bigtable.clusters.list
+  - bigtable.instances.get
+  - bigtable.instances.list
+  - bigtable.tables.get
+  - bigtable.tables.list
+  - cloudfunctions.functions.get
+  - cloudfunctions.functions.list
+  - cloudfunctions.locations.get
+  - cloudfunctions.locations.list
+  - cloudkms.cryptoKeys.get
+  - cloudkms.cryptoKeys.list
+  - cloudkms.cryptoKeyVersions.list
+  - cloudkms.keyRings.get
+  - cloudkms.keyRings.list
+  - cloudkms.locations.list
+  - cloudsql.instances.get
+  - cloudsql.instances.list
+  - compute.addresses.list
+  - compute.commitments.get
+  - compute.commitments.list
+  - compute.disks.get
   - compute.disks.list
-  - compute.snapshots.list
+  - compute.images.get
   - compute.images.list
+  - compute.instanceGroupManagers.list
+  - compute.instanceGroups.get
+  - compute.instanceGroups.list
+  - compute.instances.get
+  - compute.instances.list
+  - compute.instanceTemplates.get
+  - compute.instanceTemplates.list
+  - compute.machineTypes.get
+  - compute.projects.get
+  - compute.regions.get
+  - compute.regions.list
+  - compute.routers.get
+  - compute.routers.list
+  - compute.snapshots.get
+  - compute.snapshots.list
+  - compute.vpnGateways.get
+  - compute.vpnGateways.list
+  - compute.zones.get
+  - compute.zones.list
+  - container.clusters.get
+  - container.clusters.list
+  - dataproc.clusters.list
+  - dns.managedZones.get
+  - dns.managedZones.list
+  - dns.resourceRecordSets.list
+  - logging.buckets.get
+  - logging.buckets.list
   - monitoring.timeSeries.list
   - recommender.bigqueryCapacityCommitmentsInsights.get
   - recommender.bigqueryCapacityCommitmentsInsights.list
@@ -101,9 +166,9 @@ includedPermissions:
   - recommender.computeDiskIdleResourceInsights.list
   - recommender.computeDiskIdleResourceRecommendations.get
   - recommender.computeDiskIdleResourceRecommendations.list
-  - recommender.computeFirewallInsightTypeConfigs.get
   - recommender.computeFirewallInsights.get
   - recommender.computeFirewallInsights.list
+  - recommender.computeFirewallInsightTypeConfigs.get
   - recommender.computeImageIdleResourceInsights.get
   - recommender.computeImageIdleResourceInsights.list
   - recommender.computeImageIdleResourceRecommendations.get
@@ -131,6 +196,7 @@ includedPermissions:
   - recommender.computeInstanceIdleResourceRecommenderConfig.get
   - recommender.computeInstanceMachineTypeRecommendations.get
   - recommender.computeInstanceMachineTypeRecommendations.list
+  - recommender.computeInstanceMachineTypeRecommendations.update
   - recommender.computeInstanceMemoryUsageInsights.get
   - recommender.computeInstanceMemoryUsageInsights.list
   - recommender.computeInstanceMemoryUsagePredictionInsights.get
@@ -212,9 +278,9 @@ includedPermissions:
   - recommender.resourcemanagerProjectChangeRiskInsights.list
   - recommender.resourcemanagerProjectChangeRiskRecommendations.get
   - recommender.resourcemanagerProjectChangeRiskRecommendations.list
-  - recommender.resourcemanagerProjectUtilizationInsightTypeConfigs.get
   - recommender.resourcemanagerProjectUtilizationInsights.get
   - recommender.resourcemanagerProjectUtilizationInsights.list
+  - recommender.resourcemanagerProjectUtilizationInsightTypeConfigs.get
   - recommender.resourcemanagerProjectUtilizationRecommendations.get
   - recommender.resourcemanagerProjectUtilizationRecommendations.list
   - recommender.resourcemanagerProjectUtilizationRecommenderConfigs.get
@@ -241,3 +307,11 @@ includedPermissions:
   - recommender.spendBasedCommitmentRecommenderConfig.get
   - recommender.usageCommitmentRecommendations.get
   - recommender.usageCommitmentRecommendations.list
+  - resourcemanager.projects.get
+  - run.revisions.list
+  - run.services.list
+  - secretmanager.secrets.get
+  - secretmanager.secrets.list
+  - secretmanager.versions.list
+  - storage.buckets.get
+  - storage.buckets.list
