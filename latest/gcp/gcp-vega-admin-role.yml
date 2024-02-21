@@ -1,19 +1,22 @@
 ---
-title: Vega Platform Least Priviledge Integration Role for GCP
+title: Vega Platform Least Privilege Integration Role
 description: >
   Access to discover & read billing, bigquery, and other reporting
   resources. Includes the  compute.projects.setUsageExportBucket permission for
   automated setup. Also includes bigquery.readsessions.create to stream large
   billing data datasets. Please enable the following apis before proceeding:
+  
     Google Compute Engine API
     Google Cloud Storage API
     Google Cloud Resource Manager API
     Google Cloud Storage JSON API
-    Recommender API
-    Kubernetes Engine API
-    Dataproc API
     BigQuery API
     BigQuery Storage API
+    Cloud Billing API
+    Dataproc API
+    Kubernetes Engine API
+    Recommender API
+    
 stage: GA
 includedPermissions:
   - appengine.applications.get
