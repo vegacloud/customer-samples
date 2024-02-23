@@ -1,5 +1,5 @@
 ---
-title: Vega Platform Least Privilege Integration Role
+title: Vega Platform Integration Role - Parking Perms
 description: >
   Access to discover & read billing, bigquery, and other reporting
   resources. Includes the  compute.projects.setUsageExportBucket permission for
@@ -10,10 +10,11 @@ description: >
     Google Cloud Storage API
     Google Cloud Resource Manager API
     Google Cloud Storage JSON API
+    Google Cloud SQL Admin API
     BigQuery API
     BigQuery Storage API
-    Cloud Billing API
-    Dataproc API
+    Cloud Billing APIDataproc API
+    Cloud SQL Admin API
     Kubernetes Engine API
     Recommender API
     
@@ -316,3 +317,7 @@ includedPermissions:
   - run.services.list
   - storage.buckets.get
   - storage.buckets.list
+ # parking permissions
+  - compute.instances.start
+  - compute.instances.stop
+  - cloudsql.instances.update
