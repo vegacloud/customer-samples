@@ -56,12 +56,12 @@ Resources:
               - "compute-optimizer:Get*"
             Effect: "Allow"  
             Resource: "*"
-          - Sid: VegaDiscoveryEC2
+          - Sid: VegaDiscoverySavingsPlans
             Action:
               - "savingsplans:*"
             Effect: Allow
             Resource: "*"
-          - Sid: VegaDiscoveryEC2
+          - Sid: VegaDiscoveryOrganizations
             Action:
               - "organizations:Describe*"
               - "organizations:List*"
