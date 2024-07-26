@@ -18,12 +18,9 @@ resources:
     access:
     - role: roles/bigquery.dataViewer
       userByEmail: $(ref.vega-billing-service-account-{{ env["project_number"] }}.email)
-    tags: []
-    labels: {}
-- name: vega-billing-export-bucket
+- name: "vega-billing-export-{{ env["project_number"] }}"
   type: storage.v1.bucket
   properties:
-    name: "vega-billing-export-{{ env["project_number"] }}"
     location: US
     storageClass: STANDARD
     predefinedAcl: projectPrivate
@@ -34,7 +31,6 @@ resources:
             type: Delete
           condition:
             age: 30
-    labels: {}
   accessControl:
     gcpIamPolicy:
       bindings:
@@ -52,4 +48,4 @@ outputs:
 - name: vega-billing-service-account
   value: $(ref.vega-billing-service-account-{{ env["project_number"] }}.email)
 - name: vega-cloud-storage-export-bucket
-  value: $(ref.vega-billing-export-bucket.name)
+  value: $(ref.vega-billing-export-{{ env["project_number"] }}.name)
