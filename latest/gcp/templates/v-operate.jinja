@@ -1,0 +1,25 @@
+{% set PROJECT = env["project"] %}
+{% set BINDING_TYPE = properties["BindingType"] %}
+{% set ROLE_BINDING_PARENT = properties["RoleBindingParent"] %}
+{% set VEGA_SA = properties["VegaServiceAccountEmail"] %}
+resources:
+- name: vega-operate-actions-role
+  type: gcp-types/iam-v1:{{ BINDING_TYPE }}.roles
+  properties:
+    parent: {{ ROLE_BINDING_PARENT }}
+    roleId: vegaOperateRole
+    role:
+      title: Vega Operate Role
+      description: |
+        A GCP Role that provides least privileged access to Vega for the Operate product
+      stage: GA
+      includedPermissions:
+      - compute.instances.start
+      - compute.instances.stop
+      - cloudsql.instances.update
+- name: vega-operate-custom-role-binding
+  type: gcp-types/cloudresourcemanager-v1:virtual.{{ BINDING_TYPE }}.iamMemberBinding
+  properties:
+    resource: {{ PROJECT }}
+    role: {{ VEGA_SA }}
+    member: "serviceAccount:$(ref.vega-operate-service-account.email)"

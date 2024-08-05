@@ -1,0 +1,48 @@
+{% set PROJECT = env["project"] %}
+{% set PROJECT_NUMBER = env["project_number"] %}
+{% set BINDING_TYPE = properties["BindingType"] %}
+{% set VEGA_SA = properties["VegaServiceAccountEmail"] %}
+resources:
+- name: vega-billing-sa-bq-jobuser-binding
+  type: gcp-types/cloudresourcemanager-v1:virtual.projects.iamMemberBinding
+  properties:
+    resource: {{ PROJECT }}
+    role: roles/bigquery.jobUser
+    member: "serviceAccount:{{ VEGA_SA }}"
+- name: vega-billing-dataset
+  type: bigquery.v2.dataset
+  properties:
+    datasetReference:
+      datasetId: VegaBillingDataset
+    friendlyName: VegaBillingDataset
+    description: |
+      Dataset used to export GCP Billing data for consumption with the Vega Platform
+    location: us-west2
+    storageBillingModel: PHYSICAL
+    isCaseInsensitive: false
+    maxTimeTravelHours: 48
+    access:
+    - role: roles/bigquery.dataViewer
+      userByEmail: {{ VEGA_SA }}
+- name: vega-billing-export-{{ PROJECT_NUMBER }}
+  type: storage.v1.bucket
+  properties:
+    location: US
+    storageClass: STANDARD
+    predefinedAcl: projectPrivate
+    projection: full
+    lifecycle:
+      rule:
+      - action:
+          type: Delete
+        condition:
+          age: 30
+  accessControl:
+    gcpIamPolicy:
+      bindings:
+      - role: roles/storage.objectUser
+        members:
+        - "serviceAccount:{{ VEGA_SA }}"
+      - role: roles/storage.admin
+        members:
+        - "serviceAccount:{{ PROJECT_NUMBER }}@cloudservices.gserviceaccount.com"
