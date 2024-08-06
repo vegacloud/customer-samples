@@ -1,0 +1,8 @@
+imports:
+  - path: templates/v-inform.jinja
+
+resources:
+  - name: Vega-vInform
+    type: templates/v-inform.jinja
+    properties:
+      OrganizationId: 8XXXXXXXXXX

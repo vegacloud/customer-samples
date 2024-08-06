@@ -1,0 +1,21 @@
+imports:
+  - path: templates/v-inform.jinja
+  - path: templates/billing-export.jinja
+  - path: templates/v-operate.jinja
+
+resources:
+  - name: vInform
+    type: templates/v-inform.jinja
+    properties:
+      OrganizationId: 8XXXXXXXXXX
+  - name: Vega-Billing-Export
+    type: templates/billing-export.jinja
+    properties:
+      BindingType: $(ref.vInform.BindingType)
+      VegaServiceAccountEmail: $(ref.vega-service-account.email)
+  - name: vOperate
+    type: templates/v-operate.jinja
+    properties:
+      BindingType: $(ref.vInform.BindingType)
+      VegaServiceAccountEmail: $(ref.vega-service-account.email)
+      RoleBindingParent: $(ref.vInform.RoleBindingParent)
