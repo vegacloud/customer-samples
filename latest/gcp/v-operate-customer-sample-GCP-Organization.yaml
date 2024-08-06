@@ -7,7 +7,7 @@ resources:
   - name: vInform
     type: templates/v-inform.jinja
     properties:
-      OrganizationId: 83797038192
+      OrganizationId: 8XXXXXXXXXX
   - name: Vega-Billing-Export
     type: templates/billing-export.jinja
     properties:

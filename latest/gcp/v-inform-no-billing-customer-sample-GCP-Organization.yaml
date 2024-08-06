@@ -5,4 +5,4 @@ resources:
   - name: Vega-vInform
     type: templates/v-inform.jinja
     properties:
-      OrganizationId: 83797038192
+      OrganizationId: 8XXXXXXXXXX
