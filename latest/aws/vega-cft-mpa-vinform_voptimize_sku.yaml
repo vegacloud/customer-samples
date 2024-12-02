@@ -1,19 +1,25 @@
 Parameters:
   CurBucketsParameter:
     Type: String
-    Description: A comma-separated list of buckets & objects (/*) Vega Cloud can use to build your dashboards and reports.
-    Default: "arn:aws:s3:::your-bucket-here,arn:aws:s3:::your-bucket-here/* (one for bucket, one for resource)"
+    Description: |
+      An S3 Bucket containing CUR Exports for Vega to import into the Vega Platform. The template will construct both 
+      the Bucket and Resource (/*) ARN for the IAM Policy.
+    Default: "CUR-export-bucket"
   AttachReadOnlyRole:
     Type: String
     AllowedValues:
       - true
       - false
     Default: false
-    Description: Attach the AWS Managed ReadOnly policy to Vega Cloud's Role? This will provide Vega read-only access to more AWS Service API details within your environment.
+    Description: |
+      Attach the AWS Managed ReadOnly policy to Vega Cloud's Role? This will provide Vega read-only access to more
+      AWS Service API details within your environment.
   VegaExternalIdParameter:
     Type: String
-    Description: Vega Cloud's ExternalId for your environments (helps to authenticate role assumption).
-    Default: "vega:<get_id_from_vega_csm>"
+    Description: |
+      Vega Cloud's Organization UUID used to construct the ExternalID in IAM Role Trust Policies. This value will be
+      prefixed with `vega:`. Please work with your Customer Success Manager (CSM) for this value.
+    Default: "00000000-0000-0000-0000-000000000000"
 Conditions:
   AttachReadOnly: !Equals
     - !Ref AttachReadOnlyRole
@@ -28,13 +34,16 @@ Resources:
           - Action: "sts:AssumeRole"
             Condition:
               StringEquals:
-                "sts:ExternalId": !Ref VegaExternalIdParameter
+                "sts:ExternalId": !Sub 'vega:${VegaExternalIdParameter}'
             Effect: Allow
             Principal:
-              # 955075715928 This one of the Vega Data Collection Accounts
-              # 549829454055 This one of the Vega Data Collection Accounts
+              # 955075715928 This is one of the Vega Data Collection Accounts
+              # 549829454055 This is one of the Vega Data Collection Accounts
               # 933023916684 This is the Vega Saas Platform Account
-              AWS: ["arn:aws:iam::955075715928:root", "arn:aws:iam::549829454055:root", "arn:aws:iam::933023916684:root"]
+              AWS:
+                - "arn:aws:iam::955075715928:root"
+                - "arn:aws:iam::549829454055:root"
+                - "arn:aws:iam::933023916684:root"
             Sid: "Stmt156148350008823"
         Version: 2012-10-17
       ManagedPolicyArns:
@@ -44,9 +53,9 @@ Resources:
           - !Ref 'AWS::NoValue'
   DiscoveryPolicy:
     DependsOn: VegaAdminRole
-    Type: "AWS::IAM::Policy"
+    Type: "AWS::IAM::ManagedPolicy"
     Properties:
-      PolicyName: VegaDiscoveryPolicy
+      ManagedPolicyName: VegaDiscoveryPolicy
       Roles:
         - VegaAdmin
       PolicyDocument:
@@ -59,20 +68,20 @@ Resources:
               - "compute-optimizer:Export*"
             Effect: "Allow"  
             Resource: "*"
-          - Sid: Stmt1561483568234
+          - Sid: SavingsPlanAPIAccess
             Action:
               - "savingsplans:Describe*"
               - "savingsplans:List*"
             Effect: Allow
             Resource: "*"
-          - Sid: Stmt1561483568365
+          - Sid: OrganizationsAPIAccess
             Action:
               - "organizations:Describe*"
               - "organizations:List*"
             Effect: Allow
             Resource: "*"
             # Access to Pricing Data and Current Usage Report Definitions
-          - Sid: Stmt1651841132818
+          - Sid: PricingAndCurAPIAccess
             Effect: Allow
             Action:
               - "pricing:Get*"
@@ -80,28 +89,28 @@ Resources:
               - "cur:Describe*"
             Resource: "*"
           # Cost Explorer API Readonly Access
-          - Sid: Stmt1651840873147
+          - Sid: CostExplorerAPIAccess
             Effect: Allow
             Action:
               - "ce:Describe*"
               - "ce:Get*"
               - "ce:List*"
             Resource: "*"
-          - Sid: Stmt1651841132810
+          - Sid: BillingConductorAPIAccess
             Effect: Allow
             Action:
               - "billingconductor:List*"
             Resource: "*"
   S3SyncPolicy:
     DependsOn: VegaAdminRole
-    Type: "AWS::IAM::Policy"
+    Type: "AWS::IAM::ManagedPolicy"
     Properties:
-      PolicyName: VegaS3SyncPolicy
+      ManagedPolicyName: VegaS3SyncPolicy
       Roles:
         - VegaAdmin
       PolicyDocument:
         Statement:
-          - Sid: Stmt1651841132811
+          - Sid: S3SyncPolicyStatement
             Effect: Allow
             Action:
               - "s3:GetBucketLocation"
@@ -114,4 +123,6 @@ Resources:
               - "s3:ListMultipartUploadParts"
               - "s3:AbortMultipartUpload"
             # Add any additional S3 buckets below
-            Resource: !Split [",", !Ref CurBucketsParameter]
+            Resource:
+              - !Sub 'arn:aws:s3:::${CurBucketsParameter}'
+              - !Sub 'arn:aws:s3:::${CurBucketsParameter}/*'

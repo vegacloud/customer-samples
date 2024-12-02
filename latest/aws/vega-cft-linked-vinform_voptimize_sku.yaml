@@ -1,8 +1,10 @@
 Parameters:
   VegaExternalIdParameter:
     Type: String
-    Description: Vega Cloud's ExternalId for your environments (helps to authenticate role assumption).
-    Default: "vega:<insert new Vega OrgID>"
+    Description: |
+      Vega Cloud's Organization UUID used to construct the ExternalID in IAM Role Trust Policies. This value will be
+      prefixed with `vega:`. Please work with your Customer Success Manager (CSM) for this value.
+    Default: "00000000-0000-0000-0000-000000000000"
 Resources:
   VegaDiscoveryReader:
     Properties:
@@ -12,13 +14,16 @@ Resources:
           - Action: "sts:AssumeRole"
             Condition:
               StringEquals:
-                "sts:ExternalId": !Ref VegaExternalIdParameter
+                "sts:ExternalId": !Sub 'vega:${VegaExternalIdParameter}'
             Effect: Allow
             Principal:
-              # 955075715928 This one of the Vega Data Collection Accounts
-              # 549829454055 This one of the Vega Data Collection Accounts
+              # 955075715928 This is one of the Vega Data Collection Accounts
+              # 549829454055 This is one of the Vega Data Collection Accounts
               # 933023916684 This is the Vega Saas Platform Account
-              AWS: ["arn:aws:iam::955075715928:root", "arn:aws:iam::549829454055:root", "arn:aws:iam::933023916684:root"]
+              AWS:
+                - "arn:aws:iam::955075715928:root"
+                - "arn:aws:iam::549829454055:root"
+                - "arn:aws:iam::933023916684:root"
           - Action: "sts:AssumeRole"
             Effect: Allow
             Principal:
@@ -27,7 +32,7 @@ Resources:
     Type: "AWS::IAM::Role"
   DiscoveryPolicy:
     DependsOn: VegaDiscoveryReader
-    Type: "AWS::IAM::Policy"
+    Type: "AWS::IAM::ManagedPolicy"
     Properties:
       PolicyDocument:
         Statement:
@@ -162,6 +167,6 @@ Resources:
               - "s3:GetObject"
             Effect: Deny
             Resource: "*"
-      PolicyName: VegaDiscoveryReaderPolicy
+      ManagedPolicyName: VegaDiscoveryReaderPolicy
       Roles:
         - VegaDiscoveryReader
