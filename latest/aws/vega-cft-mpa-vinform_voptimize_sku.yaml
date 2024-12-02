@@ -37,8 +37,8 @@ Resources:
                 "sts:ExternalId": !Sub 'vega:${VegaExternalIdParameter}'
             Effect: Allow
             Principal:
-              # 955075715928 This one of the Vega Data Collection Accounts
-              # 549829454055 This one of the Vega Data Collection Accounts
+              # 955075715928 This is one of the Vega Data Collection Accounts
+              # 549829454055 This is one of the Vega Data Collection Accounts
               # 933023916684 This is the Vega Saas Platform Account
               AWS:
                 - "arn:aws:iam::955075715928:root"
