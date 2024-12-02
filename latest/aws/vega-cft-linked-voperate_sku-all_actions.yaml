@@ -32,9 +32,9 @@ Resources:
     Type: "AWS::IAM::Role"
   DiscoveryPolicy:
     DependsOn: VegaDiscoveryReader
-    Type: "AWS::IAM::Policy"
+    Type: "AWS::IAM::ManagedPolicy"
     Properties:
-      PolicyName: VegaDiscoveryReaderPolicy
+      ManagedPolicyName: VegaDiscoveryReaderPolicy
       Roles:
         - VegaDiscoveryReader
       PolicyDocument:
@@ -212,7 +212,7 @@ Resources:
     Type: "AWS::IAM::Role"
   OptimizerPolicy:
     DependsOn: VegaOptimizer
-    Type: "AWS::IAM::Policy"
+    Type: "AWS::IAM::ManagedPolicy"
     Properties:
       PolicyDocument:
         Statement:
@@ -530,6 +530,6 @@ Resources:
               - "s3:PutBucketLogging"
               - "s3:PutBucketRequestPayment"
               - "s3:PutBucketTagging"              
-      PolicyName: VegaOptimizerPolicy
+      ManagedPolicyName: VegaOptimizerPolicy
       Roles:
         - VegaOptimizer

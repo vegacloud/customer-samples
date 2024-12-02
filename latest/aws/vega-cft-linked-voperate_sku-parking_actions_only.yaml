@@ -32,7 +32,7 @@ Resources:
     Type: "AWS::IAM::Role"
   DiscoveryPolicy:
     DependsOn: VegaDiscoveryReader
-    Type: "AWS::IAM::Policy"
+    Type: "AWS::IAM::ManagedPolicy"
     Properties:
       PolicyDocument:
         Statement:
@@ -181,7 +181,7 @@ Resources:
               - "s3:GetObject"
             Effect: Deny
             Resource: "*"
-      PolicyName: VegaDiscoveryReaderPolicy
+      ManagedPolicyName: VegaDiscoveryReaderPolicy
       Roles:
         - VegaDiscoveryReader
   VegaOptimizer:
@@ -214,9 +214,9 @@ Resources:
     Type: "AWS::IAM::Role"
   ParkingPolicy:
     DependsOn: VegaOptimizer
-    Type: "AWS::IAM::Policy"
+    Type: "AWS::IAM::ManagedPolicy"
     Properties:
-      PolicyName: VegaParkingPolicy
+      ManagedPolicyName: VegaParkingPolicy
       Roles:
         - VegaOptimizer
       PolicyDocument:
@@ -364,7 +364,6 @@ Resources:
           # Park Redshift
           - Sid: VegaOptimizerRedshiftParking
             Effect: Allow
-            
             Resource: "*"
             Action:
               - "redshift:PauseCluster"

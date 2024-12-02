@@ -53,9 +53,9 @@ Resources:
           - !Ref 'AWS::NoValue'
   DiscoveryPolicy:
     DependsOn: VegaAdminRole
-    Type: "AWS::IAM::Policy"
+    Type: "AWS::IAM::ManagedPolicy"
     Properties:
-      PolicyName: VegaDiscoveryPolicy
+      ManagedPolicyName: VegaDiscoveryPolicy
       Roles:
         - VegaAdmin
       PolicyDocument:
@@ -68,20 +68,20 @@ Resources:
               - "compute-optimizer:Export*"
             Effect: "Allow"  
             Resource: "*"
-          - Sid: Stmt1561483568234
+          - Sid: SavingsPlanAPIAccess
             Action:
               - "savingsplans:Describe*"
               - "savingsplans:List*"
             Effect: Allow
             Resource: "*"
-          - Sid: Stmt1561483568365
+          - Sid: OrganizationsAPIAccess
             Action:
               - "organizations:Describe*"
               - "organizations:List*"
             Effect: Allow
             Resource: "*"
             # Access to Pricing Data and Current Usage Report Definitions
-          - Sid: Stmt1651841132818
+          - Sid: PricingAndCurAPIAccess
             Effect: Allow
             Action:
               - "pricing:Get*"
@@ -89,28 +89,28 @@ Resources:
               - "cur:Describe*"
             Resource: "*"
           # Cost Explorer API Readonly Access
-          - Sid: Stmt1651840873147
+          - Sid: CostExplorerAPIAccess
             Effect: Allow
             Action:
               - "ce:Describe*"
               - "ce:Get*"
               - "ce:List*"
             Resource: "*"
-          - Sid: Stmt1651841132810
+          - Sid: BillingConductorAPIAccess
             Effect: Allow
             Action:
               - "billingconductor:List*"
             Resource: "*"
   S3SyncPolicy:
     DependsOn: VegaAdminRole
-    Type: "AWS::IAM::Policy"
+    Type: "AWS::IAM::ManagedPolicy"
     Properties:
-      PolicyName: VegaS3SyncPolicy
+      ManagedPolicyName: VegaS3SyncPolicy
       Roles:
         - VegaAdmin
       PolicyDocument:
         Statement:
-          - Sid: Stmt1651841132811
+          - Sid: S3SyncPolicyStatement
             Effect: Allow
             Action:
               - "s3:GetBucketLocation"

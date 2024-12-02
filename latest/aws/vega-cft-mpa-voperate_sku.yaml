@@ -3,7 +3,7 @@ Parameters:
     Type: String
     Description: |
       An S3 Bucket containing CUR Exports for Vega to import into the Vega Platform. The template will construct both 
-      the Bucket and Resource (/*) ARN for the IAM Policy.
+      the Bucket and Resource (/*) ARNs for the IAM Policy.
     Default: "CUR-export-bucket"
   AttachReadOnlyRole:
     Type: String
@@ -53,9 +53,9 @@ Resources:
           - !Ref 'AWS::NoValue'
   DiscoveryPolicy:
     DependsOn: VegaAdminRole
-    Type: "AWS::IAM::Policy"
+    Type: "AWS::IAM::ManagedPolicy"
     Properties:
-      PolicyName: VegaDiscoveryPolicy
+      ManagedPolicyName: VegaDiscoveryPolicy
       Roles:
         - VegaAdmin
       PolicyDocument:
@@ -128,9 +128,9 @@ Resources:
             Resource: "*"
   S3SyncPolicy:
     DependsOn: VegaAdminRole
-    Type: "AWS::IAM::Policy"
+    Type: "AWS::IAM::ManagedPolicy"
     Properties:
-      PolicyName: VegaS3SyncPolicy
+      ManagedPolicyName: VegaS3SyncPolicy
       Roles:
         - VegaAdmin
       PolicyDocument:
