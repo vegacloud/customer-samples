@@ -67,6 +67,9 @@ jobs:
       run:
         shell: bash
         working-directory: latest/aws
+    outputs:
+      outcome: ${{ steps.pass-results.outcome }}
+      stdout: ${{ steps.pass-results.outputs.stdout }}
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v4
@@ -87,4 +90,4 @@ jobs:
         id: pass-results
         run: |
           RESULT=${{ steps.deploy-cft.outputs.stdout }}
-          echo "=$RESULT" >> $GITHUB_ENV
+          echo "stdout=$RESULT" >> $GITHUB_ENV
