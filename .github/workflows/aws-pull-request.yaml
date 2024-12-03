@@ -1,0 +1,67 @@
+name: Validate AWS CFTs
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - 'latest/aws/**'
+    branches:
+      - main
+permissions:
+  id-token: write
+  contents: read
+
+env:
+  AWS_ACCOUNT_ID: ""
+  IAM_ROLE_NAME: ""
+  AWS_REGION: us-west-2
+
+jobs:
+  validate-vinform:
+    name: Validate CFT vInform
+    uses: ./.github/workflows/callable-aws-template.yaml
+    with:
+      aws-account-id: ${{ env.AWS_ACCOUNT_ID }}
+      iam-role-name: ${{ env.IAM_ROLE_NAME }}
+      aws-region: ${{ env.AWS_REGION }}
+      file-name: vega-cft-linked-vinform_voptimize_sku.yaml
+  validate-voperate-all-actions:
+    name: Validate CFT vOperate - All Actions
+    uses: ./.github/workflows/callable-aws-template.yaml
+    with:
+      aws-account-id: ${{ env.AWS_ACCOUNT_ID }}
+      iam-role-name: ${{ env.IAM_ROLE_NAME }}
+      aws-region: ${{ env.AWS_REGION }}
+      file-name: vega-cft-linked-voperate_sku-all_actions.yaml
+  validate-voperate-parking-actions:
+    name: Validate CFT vOperate - Parking Actions
+    uses: ./.github/workflows/callable-aws-template.yaml
+    with:
+      aws-account-id: ${{ env.AWS_ACCOUNT_ID }}
+      iam-role-name: ${{ env.IAM_ROLE_NAME }}
+      aws-region: ${{ env.AWS_REGION }}
+      file-name: vega-cft-linked-voperate_sku-parking_actions_only.yaml
+  validate-voperate-parking-tagging-actions:
+    name: Validate CFT vOperate - Parking and Tagging Actions
+    uses: ./.github/workflows/callable-aws-template.yaml
+    with:
+      aws-account-id: ${{ env.AWS_ACCOUNT_ID }}
+      iam-role-name: ${{ env.IAM_ROLE_NAME }}
+      aws-region: ${{ env.AWS_REGION }}
+      file-name: vega-cft-linked-voperate_sku-parking_tagging_actions_only.yaml
+  validate-mpa-vinform-voperate:
+    name: Validate CFT MPA vInform and vOperate
+    uses: ./.github/workflows/callable-aws-template.yaml
+    with:
+      aws-account-id: ${{ env.AWS_ACCOUNT_ID }}
+      iam-role-name: ${{ env.IAM_ROLE_NAME }}
+      aws-region: ${{ env.AWS_REGION }}
+      file-name: vega-cft-mpa-vinform_voptimize_sku.yaml
+  validate-mpa-voperate:
+    name: Validate CFT MPA vOperate
+    uses: ./.github/workflows/callable-aws-template.yaml
+    with:
+      aws-account-id: ${{ env.AWS_ACCOUNT_ID }}
+      iam-role-name: ${{ env.IAM_ROLE_NAME }}
+      aws-region: ${{ env.AWS_REGION }}
+      file-name: vega-cft-mpa-voperate_sku.yaml
+
