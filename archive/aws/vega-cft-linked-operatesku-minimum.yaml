@@ -2,7 +2,7 @@ Parameters:
   VegaExternalIdParameter:
     Type: String
     Description: Vega Cloud's ExternalId for your environments (helps to authenticate role assumption).
-    Default: "vega:b57896e704c949788e36f28a1c5a116f"
+    Default: "vega:<get_id_from_vega_csm>"
 Resources:
   VegaOptimizer:
     # This role and policy are used by the Vega Platform discover, tag resources, and optimize yoour account(s)
