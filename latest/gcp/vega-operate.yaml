@@ -1,0 +1,11 @@
+---
+title: Vega Operate Role
+description: >
+  A Custom GCP Role that provides the permissions necessary for Vega's
+  Enterprise Parking solution
+
+stage: GA
+includedPermissions:
+  - compute.instances.start
+  - compute.instances.stop
+  - cloudsql.instances.update
