@@ -1,0 +1,93 @@
+on:
+  workflow_call:
+    inputs:
+      file-name:
+        required: true
+        type: string
+      aws-account-id:
+        required: true
+        type: string
+      iam-role-name:
+        required: true
+        type: string
+      aws-region:
+        required: true
+        type: string
+      organization-id:
+        required: true
+        type: string
+    secrets: {}
+
+
+jobs:
+  validate_cft:
+    name: Validate Cloudformation Template
+    timeout-minutes: 2
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    defaults:
+      run:
+        shell: bash
+        working-directory: latest/aws
+    outputs:
+      validation-status: ${{ steps.validate.outcome }}
+      validation-result: ${{ steps.pass-results.outputs.validation-result }}
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v4
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1-node16
+        with:
+          role-to-assume: arn:aws:iam::${{ inputs.aws-account-id }}:role/${{ inputs.iam-role-name }}
+          role-session-name: GithubActionValidateCft${{ inputs.file-name }}
+          aws-region: ${{ inputs.aws-region }}
+      - name: Generate Output File Name
+        id: output-file-name
+        run: |
+          echo "output-file=${{ inputs.file-name }}-output.txt" >> $GITHUB_OUTPUT
+      - name: Validate CFT
+        id: validate
+        run: |
+          aws cloudformation validate-template --template-body file://${{ inputs.file-name }} --output table >> ${{ steps.output-file-name.outputs.output-file }}
+      - name: Pass Results
+        id: pass-results
+        run: |
+          RESULT=${{ steps.output-file-name.outputs.stdout }}
+          echo "validation-result=$RESULT" >> $GITHUB_ENV
+  apply_template:
+    name: Deploy CFT to Sandbox Account
+    needs: validate_cft
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    defaults:
+      run:
+        shell: bash
+        working-directory: latest/aws
+    outputs:
+      outcome: ${{ steps.pass-results.outcome }}
+      stdout: ${{ steps.pass-results.outputs.stdout }}
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v4
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1-node16
+        with:
+          role-to-assume: arn:aws:iam::${{ inputs.aws-account-id }}:role/${{ inputs.iam-role-name }}
+          role-session-name: GithubActionValidateCft${{ inputs.file-name }}
+          aws-region: ${{ inputs.aws-region }}
+      - name: Deploy CFT
+        id: deploy-cft
+        uses: aws-actions/aws-cloudformation-github-deploy@v1
+        with:
+          name: cicd-${{ inputs.file-name }}
+          template: ${{ inputs.file-name }}
+          parameter-overrides: "VegaExternalIdParameter=${{ inputs.organization-id }}"
+      - name: Pass Results
+        id: pass-results
+        run: |
+          RESULT=${{ steps.deploy-cft.outputs.stdout }}
+          echo "stdout=$RESULT" >> $GITHUB_ENV
