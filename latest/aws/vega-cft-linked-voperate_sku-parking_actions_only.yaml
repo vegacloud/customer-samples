@@ -15,10 +15,7 @@ Resources:
                 "sts:ExternalId": !Ref VegaExternalIdParameter
             Effect: Allow
             Principal:
-              # 955075715928 This one of the Vega Data Collection Accounts
-              # 549829454055 This one of the Vega Data Collection Accounts
-              # 933023916684 This is the Vega Saas Platform Account
-              AWS: ["arn:aws:iam::955075715928:root", "arn:aws:iam::549829454055:root", "arn:aws:iam::933023916684:root"]
+              AWS: "arn:aws:iam::321079155048:root"
           - Action: "sts:AssumeRole"
             Effect: Allow
             Principal:
@@ -194,10 +191,7 @@ Resources:
                 "sts:ExternalId": !Ref VegaExternalIdParameter
             Effect: Allow
             Principal:
-              # 955075715928 This one of the Vega Data Collection Accounts
-              # 549829454055 This one of the Vega Data Collection Accounts
-              # 933023916684 This is the Vega Saas Platform Account
-              AWS: ["arn:aws:iam::955075715928:root", "arn:aws:iam::549829454055:root", "arn:aws:iam::933023916684:root"]
+              AWS: "arn:aws:iam::321079155048:root"
           - Action: "sts:AssumeRole"
             Effect: Allow
             Principal:
