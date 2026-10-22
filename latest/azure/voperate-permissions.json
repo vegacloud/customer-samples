@@ -19,6 +19,14 @@
     "Microsoft.Sql/servers/databases/pause/action",
     "Microsoft.Sql/servers/databases/resume/action",
     "Microsoft.Sql/servers/databases/write",
-    "Microsoft.Sql/servers/elasticPools/write"
+    "Microsoft.Sql/servers/elasticPools/write",
+    "Microsoft.Capacity/catalogs/read",
+    "Microsoft.Capacity/calculatePrice/action",
+    "Microsoft.Capacity/reservationOrders/read",
+    "Microsoft.Capacity/reservationOrders/write",
+    "Microsoft.Capacity/reservationOrders/reservations/read",
+    "Microsoft.BillingBenefits/savingsPlanOrders/read",
+    "Microsoft.BillingBenefits/savingsPlanOrders/write",
+    "Microsoft.BillingBenefits/validate/action"
   ]
 }

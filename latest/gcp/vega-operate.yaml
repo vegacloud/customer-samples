@@ -9,3 +9,9 @@ includedPermissions:
   - compute.instances.start
   - compute.instances.stop
   - cloudsql.instances.update
+  # CUDs Mgmt: buy and read back committed use discounts approved in the Vega portal
+  - compute.commitments.create
+  - compute.commitments.get
+  - compute.commitments.list
+  - compute.regions.list
+  - compute.machineTypes.list
