@@ -114,6 +114,70 @@ Resources:
               - "billingconductor:ListResourcesAssociatedToCustomLineItem"
               - "billingconductor:ListTagsForResource"
             Resource: "*"
+  # CUDs Mgmt: buy the Reserved Instances a user (or the customer's budget
+  # policy) approves in the Vega portal, at the management account so the
+  # benefit applies across linked accounts. Savings Plans are already covered
+  # by savingsplans:* above. Every purchase is recorded in Vega's ledger.
+  # Nothing here can sell, exchange, modify or cancel a commitment.
+  CommitmentPurchasePolicy:
+    DependsOn: VegaAdminRole
+    Type: "AWS::IAM::Policy"
+    Properties:
+      PolicyName: VegaCommitmentPurchasePolicy
+      Roles:
+        - VegaAdmin
+      PolicyDocument:
+        Statement:
+          # Resolve a recommendation to a concrete offering just before buying.
+          - Sid: VegaCommitmentOfferingLookup
+            Effect: Allow
+            Action:
+              - "ec2:DescribeReservedInstancesOfferings"
+              - "rds:DescribeReservedDBInstancesOfferings"
+              - "elasticache:DescribeReservedCacheNodesOfferings"
+              - "es:DescribeReservedInstanceOfferings"
+              - "redshift:DescribeReservedNodeOfferings"
+              - "memorydb:DescribeReservedNodesOfferings"
+            Resource: "*"
+          - Sid: VegaCommitmentPurchase
+            Effect: Allow
+            Action:
+              - "ec2:PurchaseReservedInstancesOffering"
+              - "rds:PurchaseReservedDBInstancesOffering"
+              - "elasticache:PurchaseReservedCacheNodesOffering"
+              - "es:PurchaseReservedInstanceOffering"
+              - "redshift:PurchaseReservedNodeOffering"
+              - "memorydb:PurchaseReservedNodesOffering"
+            Resource: "*"
+          # Read back what was bought (and settle a purchase that timed out).
+          - Sid: VegaCommitmentReadBack
+            Effect: Allow
+            Action:
+              - "ec2:DescribeReservedInstances"
+              - "rds:DescribeReservedDBInstances"
+              - "elasticache:DescribeReservedCacheNodes"
+              - "es:DescribeReservedInstances"
+              - "redshift:DescribeReservedNodes"
+              - "memorydb:DescribeReservedNodes"
+            Resource: "*"
+          # Tag what Vega bought so it is identifiable in your own console.
+          - Sid: VegaCommitmentTagging
+            Effect: Allow
+            Action:
+              - "ec2:CreateTags"
+              - "rds:AddTagsToResource"
+              - "elasticache:AddTagsToResource"
+              - "es:AddTags"
+              - "redshift:CreateTags"
+              - "memorydb:TagResource"
+            Resource: "*"
+          # Lets Vega check this role's own permissions before enabling purchases,
+          # instead of finding out on a purchase. Scoped to this role only.
+          - Sid: VegaCommitmentPermissionCheck
+            Effect: Allow
+            Action:
+              - "iam:SimulatePrincipalPolicy"
+            Resource: !Sub "arn:aws:iam::${AWS::AccountId}:role/VegaAdmin"
   S3SyncPolicy:
     DependsOn: VegaAdminRole
     Type: "AWS::IAM::Policy"
