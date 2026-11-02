@@ -27,6 +27,8 @@
     "Microsoft.Capacity/reservationOrders/reservations/read",
     "Microsoft.BillingBenefits/savingsPlanOrders/read",
     "Microsoft.BillingBenefits/savingsPlanOrders/write",
+    "Microsoft.BillingBenefits/savingsPlanOrderAliases/read",
+    "Microsoft.BillingBenefits/savingsPlanOrderAliases/write",
     "Microsoft.BillingBenefits/validate/action"
   ]
 }
